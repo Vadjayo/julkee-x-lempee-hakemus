@@ -204,7 +204,7 @@ export const MATCH = [
   { want: 'Oma-aloitteisuus', have: 'Kukaan ei tilannut Ilonaa. Nyt sillä on maksava asiakas.' },
   {
     want: 'Neuvonantajan ote',
-    have: 'B2B-myynnissä opin kysymään, mitä asiakas oikeasti tarvitsee, ja sanomaan sen ääneen, vaikka hän pyysi muuta.',
+    have: 'B2C-myynnissä opin kysymään, mitä asiakas oikeasti tarvitsee, ja sanomaan sen ääneen, vaikka hän pyysi muuta.',
   },
   { want: 'Selkeä suomi', have: 'Luit tänne asti.' },
 ];
@@ -219,5 +219,5 @@ export const VERSUS = [
 export const PRACTICAL = [
   'Asun Oulussa. Muutto Helsinkiin onnistuu, ja pari toimistopäivää viikossa sopii.',
   'Valmistun ohjelmistokehittäjäksi maaliskuussa 2027.',
-  'Tausta: B2B-puhelinmyynti ja rakennusala ennen alanvaihtoa.',
+  'Tausta: B2C-puhelinmyynti ja rakennusala ennen alanvaihtoa.',
 ];

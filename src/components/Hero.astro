@@ -50,9 +50,10 @@
   /* Sisääntulo intron jälkeen. Jos intro on jo nähty, sisältö on paikallaan heti. */
   :global(.js) .line > span { transition: transform 0.9s var(--ease); }
   :global(.js) .line:nth-child(2) > span { transition-delay: 0.12s; }
-  :global(.js) .hero-fade, :global(.js) .hero-kicker { transition: opacity 0.7s 0.4s, transform 0.7s 0.4s var(--ease); }
+  /* Vain siirtymä, ei häivytystä: intro peittää heron ja häipyy itse, ja puolihimmeä teksti rikkoisi kontrastin. */
+  :global(.js) .hero-fade, :global(.js) .hero-kicker { transition: transform 0.7s 0.2s var(--ease); }
   :global(.js:not(.intro-done)) .line > span { transform: translateY(110%); }
-  :global(.js:not(.intro-done)) .hero-fade, :global(.js:not(.intro-done)) .hero-kicker { opacity: 0; transform: translateY(14px); }
+  :global(.js:not(.intro-done)) .hero-fade, :global(.js:not(.intro-done)) .hero-kicker { transform: translateY(24px); }
 
   @media (prefers-reduced-motion: reduce) {
     .dot::after { animation: none; display: none; }

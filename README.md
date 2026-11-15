@@ -10,7 +10,7 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 - Intro, jossa oletusteemaisen WordPress-sivun näköinen näkymä puretaan oikean sivun tieltä. Näkyy kerran istunnossa.
 - Työt-osio, jonka esikatselut on kaapattu oikeilta sivuilta: selainkehys ja puhelinkehys vierivät samassa tahdissa, ja Reskontratutkasta on ruutunauhoitus oikeasta hausta.
 - Ilonan kortissa on havainnekuva, koska tuotteella ei ole julkista käyttöliittymää. Työnhakuagentin kortissa on ote aidosta Telegram-viestistä.
-- Kokemuslaskuri, rakennustyökalu ja selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
+- Kokemuslaskuri, itse rakennettava rakennustyökalu ja selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
 - Ei evästeitä, ei seurantaa, ei ulkoisia fontteja. Sivulla on `noindex`, koska siinä on puhelinnumero.
 - Semanttinen HTML ja `Person`-tyyppinen JSON-LD.
 - Sisältö näkyy ilman JavaScriptiä, ja `prefers-reduced-motion` poistaa intron, vierityksen ja videot.
@@ -71,8 +71,8 @@ npm run lighthouse                                   # kirjoittaa src/data/light
 
 | Tarkistus | Tulos |
 |---|---|
-| Playwright, paikallinen build | 17/17 läpi |
-| Playwright, tuotanto-osoite | 17/17 läpi |
+| Playwright, paikallinen build | 18/18 läpi |
+| Playwright, tuotanto-osoite | 18/18 läpi |
 | Leveydet 375, 768 ja 1440 px | Ei vaakavieritystä, ei päällekkäisiä elementtejä, ei konsolivirheitä. Kuvakaappaukset katsottu läpi. |
 | Lighthouse, mobiili, tuotanto, kolme ajoa | Suorituskyky 100, saavutettavuus 100, parhaat käytännöt 100 |
 | Lighthouse, hakukoneet | 69. Ainoa pisteitä vievä tarkistus on `is-crawlable`, eli tarkoituksellinen `noindex`. |
