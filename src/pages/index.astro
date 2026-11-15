@@ -27,7 +27,6 @@ import { PRACTICAL } from '../data/content';
 
     <section class="section" id="miksi" aria-labelledby="miksi-title">
       <div class="wrap">
-        <p class="kicker rv"><b>08</b> / Miksi Julkee x Lempee</p>
         <h2 id="miksi-title" class="rv">Miksi juuri te</h2>
         <p class="lead rv">
           Useimmat työpaikkailmoitukset ovat PDF-tiedostoja. Te rakensitte työkalun, joka polttaa WordPress-sivuja.
@@ -43,7 +42,6 @@ import { PRACTICAL } from '../data/content';
 
     <section class="section" id="kaytanto" aria-labelledby="kaytanto-title">
       <div class="wrap">
-        <p class="kicker rv"><b>09</b> / Käytännön asiat</p>
         <h2 id="kaytanto-title" class="rv">Kolme asiaa, jotka on hyvä tietää</h2>
         <ol class="facts3">
           {PRACTICAL.map((text) => <li class="rv">{text}</li>)}
@@ -61,7 +59,6 @@ import { PRACTICAL } from '../data/content';
 </script>
 
 <style>
-  .facts3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 48px; counter-reset: fact; }
-  .facts3 li { border-left: 2px solid var(--red); padding: 2px 0 2px 20px; font-size: 18px; counter-increment: fact; text-wrap: pretty; }
-  .facts3 li::before { content: '0' counter(fact); display: block; font: 12px var(--mono); color: var(--dim); margin-bottom: 8px; }
+  .facts3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 48px; }
+  .facts3 li { border-left: 2px solid var(--red); padding: 2px 0 2px 20px; font-size: 18px; text-wrap: pretty; }
 </style>
