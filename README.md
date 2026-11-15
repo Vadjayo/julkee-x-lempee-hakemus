@@ -7,10 +7,11 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 ## Mitä tehtiin
 
 - Yksi staattinen sivu Astrolla ja TypeScriptillä. Ei UI-kehystä eikä animaatiokirjastoa: liike on CSS:ää, Web Animations APIa, IntersectionObserveria ja intron osalta WebGL2:ta.
-- Intro on pelimäinen välianimaatio: oletusteemaisen WordPress-sivun näköinen näkymä lukitaan kohteeksi ja räjäytetään dynamiitilla. Sivu sirpaloituu ja tuli, kipinät ja savu piirretään WebGL2-varjostimilla ilman kirjastoja (`src/scripts/intro-gl.ts`). Jos WebGL2 puuttuu, käytössä on Canvas 2D -varatoteutus. Näkyy kerran istunnossa, ja sen voi ohittaa.
+- Intro on pelimäinen välianimaatio: oikean WordPress-laskeutumissivun näköinen näkymä (valikko, hero, artikkelikortit, evästebanneri) lukitaan kohteeksi ja räjäytetään dynamiitilla. Sivu sirpaloituu ja tuli, kipinät ja savu piirretään WebGL2-varjostimilla ilman kirjastoja (`src/scripts/intro-gl.ts`). Jos WebGL2 puuttuu, käytössä on Canvas 2D -varatoteutus. Näkyy kerran istunnossa, ja sen voi ohittaa.
 - Työt-osio (neljä asiakassivustoa, oma SaaS, agentti ja demo), jonka esikatselut on kaapattu oikeilta sivuilta: selainkehys ja puhelinkehys vierivät samassa tahdissa, ja Reskontratutkasta on ruutunauhoitus oikeasta hausta.
 - Ilonan kortissa on havainnekuva, koska tuotteella ei ole julkista käyttöliittymää. Työnhakuagentin kortissa on ote aidosta Telegram-viestistä.
-- Itse rakennettava rakennustyökalu ja selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
+- Rakennustyökalu on intron vastakohta samalla tekniikalla: kävijä lyö palat paikalleen, ja jokainen pala kootaan sisään lentävistä sirpaleista (`src/scripts/builder-gl.ts`). Purku räjäyttää valmiin sivun. Valmiin sivun nappi on oikea linkki yhteystietoihin.
+- Selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
 - Ei evästeitä, ei seurantaa, ei ulkoisia fontteja. Sivulla on `noindex`, koska siinä on puhelinnumero.
 - Semanttinen HTML ja `Person`-tyyppinen JSON-LD.
 - Sisältö näkyy ilman JavaScriptiä, ja `prefers-reduced-motion` poistaa intron, vierityksen ja videot.
@@ -24,6 +25,7 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 | `src/components/` | Yksi komponentti per osio |
 | `src/scripts/main.ts` | Sivun selainlogiikka |
 | `src/scripts/intro.ts`, `src/scripts/intro-gl.ts` | Intron ohjaus ja WebGL-räjähdys |
+| `src/scripts/builder-gl.ts` | Rakennustyökalun sirpaleet ja kipinät |
 | `scripts/capture.ts` | Esikatselujen kaappaus Playwrightilla |
 | `scripts/lighthouse.ts` | Lighthouse-ajo ja pisteiden tallennus |
 | `scripts/check-text.ts`, `scripts/check-links.ts` | Kieli- ja linkkitarkistukset |
