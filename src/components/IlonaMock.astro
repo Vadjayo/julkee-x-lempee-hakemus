@@ -1,70 +1,148 @@
 ---
 /**
- * Havainnekuva Ilonan toiminnasta. Ilonalla ei ole julkista käyttöliittymää,
- * eikä kuvassa ole keksittyä keskustelua: puhekuplissa on vain vaiheen nimi.
+ * Havainnekuva Ilonan toiminnasta: puhelu vasemmalla, omistajan puhelin oikealla.
+ * Ilonalla ei ole julkista käyttöliittymää, eikä kuvassa ole keksittyä keskustelua:
+ * puhekuplissa on vain vaiheen nimi ja paikkamerkkiviivat.
+ *
+ * Yksi 12 sekunnin kierros: puhelu saapuu, soittaja puhuu, Ilona vastaa, puhelu päättyy
+ * ja yhteenveto kilahtaa omistajan puhelimeen. Animaatio pyörii vain näkyvissä (ks. main.ts).
  */
-const bars = Array.from({ length: 18 }, (_, i) => i);
+// Paikallaan olevan aallon korkeudet. Liikkeessä palkit animoidaan.
+const bars = Array.from({ length: 22 }, (_, i) => ({ i, h: (0.25 + 0.75 * Math.abs(Math.sin(i * 1.7))).toFixed(2) }));
 ---
 <figure class="mock" data-play="loop">
   <span class="badge">Havainnekuva</span>
-  <ol class="call">
-    <li class="step s1">
-      <span class="who">Soittaja</span>
-      <span class="bubble"><span class="what">Kysyy yritykseltä jotain</span><i class="sk w80"></i><i class="sk w55"></i></span>
-    </li>
-    <li class="step s2" aria-label="Ilona kuuntelee ja hakee vastauksen">
-      <span class="wave" aria-hidden="true">{bars.map((i) => <i style={`--i:${i}`}></i>)}</span>
-    </li>
-    <li class="step s3">
-      <span class="who">Ilona</span>
-      <span class="bubble"><span class="what">Vastaa yrityksen omilla tiedoilla</span><i class="sk w90"></i><i class="sk w70"></i><i class="sk w40"></i></span>
-    </li>
-    <li class="step s4">
-      <span class="sms">
-        <span class="sms-head">Tekstiviesti omistajalle</span>
+  <div class="scene" aria-hidden="true">
+    <div class="phone call">
+      <div class="status">
+        <span class="st st1">Puhelu saapuu</span>
+        <span class="st st2">Soittaja puhuu</span>
+        <span class="st st3">Ilona puhuu</span>
+        <span class="st st4">Puhelu päättyi</span>
+      </div>
+      <div class="voice">
+        <span class="avatar"><i class="ring r1"></i><i class="ring r2"></i><b>I</b></span>
+        <span class="waves">
+          <span class="wave caller">{bars.map((b) => <i style={`--i:${b.i};--h:${b.h}`}></i>)}</span>
+          <span class="wave ilona">{bars.map((b) => <i style={`--i:${b.i};--h:${b.h}`}></i>)}</span>
+        </span>
+      </div>
+      <div class="bubble b1"><span class="what">Soittaja kysyy</span><i class="sk w80"></i><i class="sk w55"></i></div>
+      <div class="bubble b2"><span class="what">Ilona vastaa yrityksen omilla tiedoilla</span><i class="sk w90"></i><i class="sk w60"></i></div>
+    </div>
+
+    <div class="track"><i class="packet"><b></b></i></div>
+
+    <div class="phone owner">
+      <span class="notch"></span>
+      <p class="owner-label">Omistajan puhelin</p>
+      <div class="notif">
+        <span class="notif-head"><b></b>Tekstiviesti</span>
         <span class="what">Yhteenveto puhelusta ja liidin tiedot</span>
-        <i class="sk w90"></i><i class="sk w75"></i><i class="sk w50"></i>
-      </span>
-    </li>
-  </ol>
+        <i class="sk w90"></i><i class="sk w70"></i><i class="sk w45"></i>
+      </div>
+    </div>
+  </div>
   <figcaption class="visually-hidden">
-    Havainnekuva: soittaja kysyy, Ilona vastaa yrityksen omilla tiedoilla ja omistaja saa puhelusta yhteenvedon tekstiviestinä.
+    Havainnekuva: puhelu saapuu, soittaja kysyy, Ilona vastaa yrityksen omilla tiedoilla ja omistaja saa puhelusta yhteenvedon tekstiviestinä.
   </figcaption>
 </figure>
 
 <style>
-  .mock { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #111; padding: 44px 16px 16px; overflow: hidden; }
+  .mock { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #111; padding: 46px 14px 16px; overflow: hidden; }
   .badge { position: absolute; top: 12px; left: 12px; font: 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #000; background: var(--fg); border-radius: 999px; padding: 3px 10px; }
-  .call { display: grid; gap: 10px; }
-  .step { display: grid; gap: 4px; max-width: 78%; }
-  .s2 { max-width: none; justify-items: center; padding: 2px 0; }
-  .s3 { justify-self: end; justify-items: end; }
-  .s4 { justify-self: center; max-width: 92%; width: 100%; margin-top: 4px; }
-  .who { font: 11px var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
-  .bubble, .sms { display: grid; gap: 6px; padding: 10px 12px; border-radius: 14px; background: #1c1c1c; border: 1px solid #2c2c2c; font-size: 13px; }
-  .s3 .bubble { background: var(--fg); color: #000; border-color: var(--fg); }
-  .s3 .sk { background: rgba(0, 0, 0, 0.25); }
-  .sms { border-color: var(--red); background: #0a0a0a; border-radius: 12px; }
-  .sms-head { font: 11px var(--mono); color: var(--red); text-transform: uppercase; letter-spacing: 0.08em; }
-  .what { font-weight: 600; line-height: 1.3; }
-  .sk { display: block; height: 6px; border-radius: 3px; background: #3a3a3a; }
-  .w90 { width: 90%; } .w80 { width: 80%; } .w75 { width: 75%; } .w70 { width: 70%; } .w55 { width: 55%; } .w50 { width: 50%; } .w40 { width: 40%; }
-  .wave { display: flex; align-items: center; gap: 3px; height: 26px; }
-  .wave i { width: 3px; height: 100%; border-radius: 2px; background: var(--red); transform: scaleY(0.25); }
+  .scene { display: grid; grid-template-columns: minmax(0, 1.5fr) 26px minmax(0, 1fr); align-items: center; }
+  .phone { position: relative; border: 1px solid #333; border-radius: 18px; background: #0a0a0a; padding: 14px 12px; display: grid; gap: 10px; align-content: start; }
+  .what { font-weight: 600; font-size: 12.5px; line-height: 1.3; }
+  .sk { display: block; height: 5px; border-radius: 3px; background: #3a3a3a; }
+  .w90 { width: 90%; } .w80 { width: 80%; } .w70 { width: 70%; } .w60 { width: 60%; } .w55 { width: 55%; } .w45 { width: 45%; }
 
-  /* Vaiheet ilmestyvät vuorotellen, kun kortti on näkyvissä. Muulloin kaikki näkyy paikallaan. */
-  :global(.js) .mock.playing .step { animation: step 10s linear infinite both; }
-  :global(.js) .mock.playing .s1 { --from: 2%; animation-name: step1; }
-  :global(.js) .mock.playing .s2 { animation-name: step2; }
-  :global(.js) .mock.playing .s3 { animation-name: step3; }
-  :global(.js) .mock.playing .s4 { animation-name: step4; }
-  :global(.js) .mock.playing .wave i { animation: wave 0.9s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -0.13s); }
-  @keyframes step1 { 0%, 2% { opacity: 0; transform: translateY(10px); } 8%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
-  @keyframes step2 { 0%, 16% { opacity: 0; transform: translateY(10px); } 22%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
-  @keyframes step3 { 0%, 34% { opacity: 0; transform: translateY(10px); } 40%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
-  @keyframes step4 { 0%, 56% { opacity: 0; transform: translateY(10px); } 62%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
-  @keyframes wave { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+  /* Puhelu */
+  .status { display: grid; font: 11px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+  .st { grid-area: 1 / 1; opacity: 0; }
+  .st3 { opacity: 1; color: var(--red); }
+  .voice { display: flex; align-items: center; gap: 12px; }
+  .avatar { position: relative; flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--red); color: #000; display: grid; place-items: center; font: 800 16px var(--sans); }
+  .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--red); opacity: 0; }
+  .waves { position: relative; flex: 1; height: 34px; }
+  .wave { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; }
+  .wave i { width: 3px; height: 100%; border-radius: 2px; background: var(--fg); transform: scaleY(var(--h)); }
+  .wave.ilona i { background: var(--red); }
+  .wave.caller { opacity: 0; }
+  .bubble { display: grid; gap: 5px; padding: 9px 11px; border-radius: 12px; background: #1c1c1c; border: 1px solid #2c2c2c; max-width: 88%; }
+  .b2 { justify-self: end; background: var(--fg); color: #000; border-color: var(--fg); }
+  .b2 .sk { background: rgba(0, 0, 0, 0.25); }
+
+  /* Yhteenvedon matka puhelusta omistajalle */
+  .track { position: relative; height: 2px; background: repeating-linear-gradient(90deg, #444 0 4px, transparent 4px 8px); }
+  .packet { position: absolute; inset: -4px 0; display: block; opacity: 0; }
+  .packet b { display: block; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--red); }
+
+  /* Omistajan puhelin */
+  .owner { min-height: 150px; padding-top: 22px; }
+  .notch { position: absolute; top: 8px; left: 50%; width: 34px; height: 5px; margin-left: -17px; border-radius: 3px; background: #2a2a2a; }
+  .owner-label { font: 10px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); text-align: center; }
+  .notif { display: grid; gap: 5px; padding: 9px 10px; border-radius: 12px; background: #1c1c1c; border: 1px solid var(--red); }
+  .notif-head { display: flex; align-items: center; gap: 6px; font: 10px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--red); }
+  .notif-head b { width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+
+  /* Animaatio: vain kun kortti on näkyvissä. Muulloin näkyy valmis lopputilanne. */
+  :global(.js) .mock.playing .st1 { animation: st1 12s linear infinite both; }
+  :global(.js) .mock.playing .st2 { animation: st2 12s linear infinite both; }
+  :global(.js) .mock.playing .st3 { animation: st3 12s linear infinite both; }
+  :global(.js) .mock.playing .st4 { animation: st4 12s linear infinite both; }
+  :global(.js) .mock.playing .avatar { animation: ringing 12s linear infinite both; }
+  :global(.js) .mock.playing .r1 { animation: ring 12s linear infinite both; }
+  :global(.js) .mock.playing .wave.caller { animation: wave-caller 12s linear infinite both; }
+  :global(.js) .mock.playing .wave.ilona { animation: wave-ilona 12s linear infinite both; }
+  :global(.js) .mock.playing .b1 { animation: b1 12s linear infinite both; }
+  :global(.js) .mock.playing .b2 { animation: b2 12s linear infinite both; }
+  :global(.js) .mock.playing .packet { animation: packet 12s linear infinite both; }
+  :global(.js) .mock.playing .notif { animation: notif 12s linear infinite both; }
+  :global(.js) .mock.playing .owner { animation: buzz 12s linear infinite both; }
+  :global(.js) .mock.playing .r2 { animation: ring 12s linear 0.35s infinite both; }
+  :global(.js) .mock.playing .wave i { animation: bar 0.8s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -0.17s); }
+
+  @keyframes st1 { 0%, 9% { opacity: 1; } 11%, 100% { opacity: 0; } }
+  @keyframes st2 { 0%, 11% { opacity: 0; } 13%, 39% { opacity: 1; } 41%, 100% { opacity: 0; } }
+  @keyframes st3 { 0%, 41% { opacity: 0; } 43%, 65% { opacity: 1; } 67%, 100% { opacity: 0; } }
+  @keyframes st4 { 0%, 67% { opacity: 0; } 69%, 95% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes ringing {
+    0%, 10%, 100% { transform: none; }
+    1%, 3%, 5%, 7% { transform: rotate(-12deg); }
+    2%, 4%, 6%, 8% { transform: rotate(12deg); }
+  }
+  @keyframes ring { 0% { opacity: 0.8; transform: scale(1); } 5% { opacity: 0; transform: scale(2.2); } 5.1%, 100% { opacity: 0; transform: scale(1); } }
+  @keyframes wave-caller { 0%, 11% { opacity: 0; } 13%, 39% { opacity: 1; } 41%, 100% { opacity: 0; } }
+  @keyframes wave-ilona { 0%, 41% { opacity: 0; } 43%, 65% { opacity: 1; } 67%, 100% { opacity: 0; } }
+  @keyframes bar { from { transform: scaleY(0.15); } to { transform: scaleY(1); } }
+  @keyframes b1 { 0%, 14% { opacity: 0; transform: translateY(10px) scale(0.96); } 18%, 95% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+  @keyframes b2 { 0%, 44% { opacity: 0; transform: translateY(10px) scale(0.96); } 48%, 95% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+  @keyframes packet { 0%, 68% { opacity: 0; transform: translateX(0); } 69% { opacity: 1; transform: translateX(0); } 75% { opacity: 1; transform: translateX(100%); } 76%, 100% { opacity: 0; transform: translateX(100%); } }
+  @keyframes notif {
+    0%, 75% { opacity: 0; transform: translateY(-26px) scale(0.92); }
+    78% { opacity: 1; transform: translateY(4px) scale(1.03); }
+    80%, 95% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: none; }
+  }
+  @keyframes buzz {
+    0%, 76%, 82%, 100% { transform: none; }
+    77%, 79%, 81% { transform: translateX(-2px) rotate(-1deg); }
+    78%, 80% { transform: translateX(2px) rotate(1deg); }
+  }
+
+  @media (max-width: 560px) {
+    /* Kapealla näytöllä puhelimet ovat allekkain ja yhteenveto kulkee alaspäin. */
+    .scene { grid-template-columns: 1fr; justify-items: stretch; }
+    .track { width: 2px; height: 22px; justify-self: center; background: repeating-linear-gradient(180deg, #444 0 4px, transparent 4px 8px); }
+    .packet { inset: 0 -4px; }
+    .packet b { margin: -5px 0 0; }
+    :global(.js) .mock.playing .packet { animation-name: packet-y; }
+    .owner { min-height: 0; }
+    .wave i:nth-child(even) { display: none; }
+  }
+  @keyframes packet-y { 0%, 68% { opacity: 0; transform: translateY(0); } 69% { opacity: 1; transform: translateY(0); } 75% { opacity: 1; transform: translateY(100%); } 76%, 100% { opacity: 0; transform: translateY(100%); } }
   @media (prefers-reduced-motion: reduce) {
-    :global(.js) .mock.playing .step, :global(.js) .mock.playing .wave i { animation: none; }
+    :global(.js) .mock.playing * { animation: none !important; }
   }
 </style>
