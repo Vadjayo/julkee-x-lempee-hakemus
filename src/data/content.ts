@@ -81,7 +81,7 @@ export const PROJECTS: Project[] = [
     type: 'Oma SaaS',
     name: 'Ilona',
     description:
-      'Suomenkielinen tekoälypuhelinvastaaja yrityksille. Vastaa soittajalle yrityksen omilla tiedoilla, kerää liidit ja lähettää omistajalle yhteenvedon tekstiviestinä. Maksava pilottiasiakas, yli 1700 automaattista testiä, käytössä Go Vuokatilla.',
+      'Suomenkielinen tekoälypuhelinvastaaja yrityksille. Vastaa soittajalle yrityksen omilla tiedoilla, kerää liidit ja lähettää omistajalle yhteenvedon tekstiviestinä. Maksava pilottiasiakas, yli 1700 automaattista testiä ja tietoturva-auditointi. Käytössä Go Vuokatilla.',
     role: 'Oma tuote ideasta tuotantoon. Ei julkista käyttöliittymää, joten kuva on havainnekuva.',
     tech: ['Claude', 'ElevenLabs', 'Telnyx', 'Supabase', 'Railway'],
     preview: { kind: 'ilona' },
@@ -221,13 +221,6 @@ export const MATCH = [
     have: 'Myyntityö opetti kuuntelemaan. Jos asiakas tarvitsee muuta kuin pyytää, sanon sen.',
   },
   { want: 'Selkeä suomi', have: 'Luit tänne asti.' },
-];
-
-export const VERSUS = [
-  { topic: 'Lisäosat', wp: '47, joista 14 vanhentunutta', me: 'Ei yhtään' },
-  { topic: 'Päivitykset', wp: 'Perjantaina kello 16', me: 'Kahdeksan tuntia kuussa, teidän piikkiinne' },
-  { topic: 'Kun jokin hajoaa', wp: 'Valkoinen ruutu', me: 'Sanon sen heti ja korjaan' },
-  { topic: 'Tietoturva', wp: 'Riippuu lisäosasta', me: 'Yli 1700 testiä ja tietoturva-auditointi Ilonassa' },
 ];
 
 export const PRACTICAL = [
