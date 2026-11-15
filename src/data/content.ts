@@ -204,7 +204,7 @@ export const MATCH = [
   { want: 'Oma-aloitteisuus', have: 'Kukaan ei tilannut Ilonaa. Nyt sillä on maksava asiakas.' },
   {
     want: 'Neuvonantajan ote',
-    have: 'B2C-myynnissä opin kysymään, mitä asiakas oikeasti tarvitsee, ja sanomaan sen ääneen, vaikka hän pyysi muuta.',
+    have: 'Myyntityö opetti kuuntelemaan. Jos asiakas tarvitsee muuta kuin pyytää, sanon sen.',
   },
   { want: 'Selkeä suomi', have: 'Luit tänne asti.' },
 ];
