@@ -8,18 +8,22 @@ const root = document.documentElement;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fi = (value: number, digits = 0) => value.toFixed(digits).replace('.', ',');
 
-/* ---------- Intro: feikki-WordPress puretaan ---------- */
+/* ---------- Intro: feikki-WordPress räjäytetään dynamiitilla ---------- */
 function intro(): void {
   if (root.classList.contains('intro-done')) return;
   const overlay = $('#intro');
   const hud = $('#intro-hud');
   const pct = $('#intro-pct');
   const meter = $('#intro-meter');
+  const tnt = $('#intro-tnt');
   let done = false;
+  const timers: number[] = [];
+  const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
 
   const finish = () => {
     if (done) return;
     done = true;
+    timers.forEach(clearTimeout);
     try {
       sessionStorage.setItem('intro-seen', '1');
     } catch {
@@ -35,58 +39,119 @@ function intro(): void {
   };
   $('#intro-skip').addEventListener('click', finish);
 
-  // Pilko tekstit putoaviksi paloiksi: otsikko kirjaimittain, muu teksti sanoittain.
-  // Sanat pitävät elementtien määrän pienenä, jotta purku pyörii kevyesti hitaallakin puhelimella.
-  const walker = document.createTreeWalker(overlay, NodeFilter.SHOW_TEXT);
-  const nodes: Text[] = [];
-  while (walker.nextNode()) nodes.push(walker.currentNode as Text);
-  const chars: HTMLElement[] = [];
-  for (const node of nodes) {
-    const text = node.textContent ?? '';
-    if (!text.trim()) continue;
-    const byLetter = node.parentElement?.classList.contains('intro-title');
-    const pieces = byLetter ? [...text] : text.split(/(?<=\s)/);
-    const fragment = document.createDocumentFragment();
-    for (const piece of pieces) {
-      const span = document.createElement('span');
-      span.className = 'ch';
-      span.textContent = piece;
-      fragment.append(span);
-      chars.push(span);
-    }
-    node.replaceWith(fragment);
-  }
+  // Aikajana: lue sivu (1,2 s), dynamiitti putoaa (0,45 s), lanka palaa (1,35 s), räjähdys (1,1 s), häivytys (0,4 s).
+  const HOLD = 1200;
+  const DROP = 450;
+  const FUSE = 1350;
+  const BLAST = 1100;
+  const fill = 'forwards' as const;
 
-  // Ensin 1,5 s aikaa lukea WordPress-näkymä, sitten 2,6 s purku. Yhteensä noin 4,65 s häivytyksineen.
-  const HOLD = 1500;
-  const FALL = 2600;
-  setTimeout(() => {
-    if (done) return;
-    for (const char of chars) {
-      const dx = (Math.random() - 0.5) * 240;
-      const rot = (Math.random() - 0.5) * 540;
-      const duration = 900 + Math.random() * 600;
-      char.animate([{ transform: 'none' }, { transform: `translate(${dx}px, 110vh) rotate(${rot}deg)` }], {
-        duration,
-        delay: Math.random() * (FALL - 1500),
-        easing: 'cubic-bezier(.5,0,.9,.5)',
-        fill: 'forwards',
-      });
+  later(() => {
+    tnt.animate(
+      [
+        { opacity: 1, transform: 'translateY(-110vh) rotate(-30deg)' },
+        { opacity: 1, transform: 'translateY(0) rotate(6deg)', offset: 0.7 },
+        { opacity: 1, transform: 'translateY(-16px) rotate(-3deg)', offset: 0.85 },
+        { opacity: 1, transform: 'none' },
+      ],
+      { duration: DROP, easing: 'cubic-bezier(.4,0,.6,1)', fill },
+    );
+  }, HOLD);
+
+  later(() => {
+    // Lanka lyhenee, kipinä laskeutuu sen mukana ja nippu vilkkuu yhä tiheämmin.
+    $('#intro-fuse').animate([{ transform: 'scaleY(1)' }, { transform: 'scaleY(0.1)' }], { duration: FUSE, easing: 'linear', fill });
+    $('#intro-spark').animate(
+      [
+        { opacity: 1, transform: 'translateY(0) scale(1)' },
+        { opacity: 1, transform: 'translateY(7px) scale(1.5)' },
+        { opacity: 1, transform: 'translateY(14px) scale(0.9)' },
+        { opacity: 1, transform: 'translateY(21px) scale(1.6)' },
+        { opacity: 1, transform: 'translateY(27px) scale(1.1)' },
+      ],
+      { duration: FUSE, easing: 'linear', fill },
+    );
+    // Kahdeksan välähdystä, joista jokainen on edellistä lyhyempi.
+    const gaps = Array.from({ length: 8 }, (_, i) => 0.78 ** i);
+    const total = gaps.reduce((sum, gap) => sum + gap, 0);
+    const blink: Keyframe[] = [];
+    let at = 0;
+    for (const gap of gaps) {
+      blink.push({ opacity: 0, offset: at / total }, { opacity: 0.85, offset: (at + gap / 2) / total });
+      at += gap;
     }
+    blink.push({ opacity: 1, offset: 1 });
+    $('#intro-glow').animate(blink, { duration: FUSE, fill });
+    tnt.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }], { duration: 260, delay: FUSE - 260, easing: 'ease-in', fill, composite: 'add' });
+  }, HOLD + DROP);
+
+  later(() => {
+    // Räjähdys: välähdys, paineaalto, tärähdys ja kaikki sisältö lentää dynamiitista poispäin.
+    const origin = tnt.getBoundingClientRect();
+    const ox = origin.left + origin.width / 2;
+    const oy = origin.top + origin.height / 2;
+    tnt.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 60, fill });
+    $('#intro-flash').animate([{ opacity: 0.95 }, { opacity: 0 }], { duration: 520, easing: 'ease-out' });
+    $('#intro-blast').animate(
+      [
+        { opacity: 0.9, transform: 'scale(0.2)' },
+        { opacity: 0, transform: 'scale(16)' },
+      ],
+      { duration: 650, easing: 'cubic-bezier(.1,.7,.3,1)' },
+    );
+    overlay.animate(
+      [0, -9, 8, -6, 5, -3, 0].map((x, i) => ({ transform: `translate(${x}px, ${i % 2 ? 6 : -5}px)` })).concat({ transform: 'none' }),
+      { duration: 420 },
+    );
+
+    // Otsikko lentää kirjaimittain, ylä- ja ilmoituspalkki kokonaisina kappaleina.
+    const pieces: HTMLElement[] = [$('.intro-bar'), $('.intro-notice')];
+    for (const line of [$('.intro-title'), $('.intro-sub')]) {
+      const text = line.textContent ?? '';
+      line.textContent = '';
+      for (const char of text) {
+        const span = document.createElement('span');
+        span.className = 'ch';
+        span.dataset.t = char;
+        line.append(span);
+        pieces.push(span);
+      }
+    }
+    for (const piece of pieces) {
+      const rect = piece.getBoundingClientRect();
+      const dx = rect.left + rect.width / 2 - ox;
+      const dy = rect.top + rect.height / 2 - oy;
+      const length = Math.hypot(dx, dy) || 1;
+      // Lähellä olevat palat lentävät kovempaa.
+      const force = (520 + Math.random() * 420) * Math.min(1.6, 260 / length + 0.5);
+      const fx = (dx / length) * force + (Math.random() - 0.5) * 160;
+      const fy = (dy / length) * force - 120;
+      const rot = (Math.random() - 0.5) * 900;
+      piece.animate(
+        [
+          { transform: 'none' },
+          { transform: `translate(${fx * 0.7}px, ${fy * 0.7}px) rotate(${rot * 0.6}deg)`, offset: 0.45, easing: 'ease-in' },
+          { transform: `translate(${fx * 1.15}px, ${fy * 0.7 + innerHeight}px) rotate(${rot}deg)` },
+        ],
+        { duration: BLAST * (0.8 + Math.random() * 0.3), easing: 'cubic-bezier(.1,.6,.4,1)', fill },
+      );
+    }
+
     const start = performance.now();
+    const COUNT = BLAST - 200;
     const tick = (now: number) => {
       if (done) return;
-      const p = Math.min(1, (now - start) / FALL);
+      const p = Math.min(1, (now - start) / COUNT);
       const label = `Purettu ${Math.round(p * 100)} %`;
       if (pct.textContent !== label) pct.textContent = label;
       meter.style.transform = `scaleX(${p})`;
       if (p < 1) requestAnimationFrame(tick);
-      else setTimeout(finish, 150);
     };
     requestAnimationFrame(tick);
-  }, HOLD);
-  // Varmistus: jos välilehti on taustalla eikä animaatio pyöri, sivu aukeaa silti.
-  setTimeout(finish, HOLD + FALL + 400);
+  }, HOLD + DROP + FUSE);
+
+  // Ajastin päättää intron, vaikka välilehti olisi taustalla eikä animaatio pyörisi.
+  later(finish, HOLD + DROP + FUSE + BLAST + 150);
 }
 
 /* ---------- Punainen piste ---------- */
@@ -334,7 +399,7 @@ function builder(): void {
   auto.addEventListener('click', () => {
     if (placed >= slots.length) return;
     auto.disabled = true;
-    msg.textContent = 'Claude rakentaa';
+    msg.textContent = 'Rakennetaan';
     place();
     autoTimer = window.setInterval(place, reduce ? 0 : 300);
   });

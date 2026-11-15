@@ -26,6 +26,10 @@ test.describe('intro', () => {
     await page.goto('/');
     await expect(page.locator('#intro')).toBeVisible();
     await expect(page.locator('#intro')).toContainText('Just another WordPress site');
+    await expect(page.locator('#intro')).toContainText('14 lisäosaa odottaa päivitystä');
+    // Dynamiitti putoaa ruutuun ennen räjähdystä.
+    await expect.poll(() => page.locator('#intro-tnt').evaluate((el) => getComputedStyle(el).opacity), { timeout: 3000 }).toBe('1');
+    await expect(page.locator('#intro-pct')).toHaveText('Purettu 100 %', { timeout: 6000 });
     await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 8000 });
     // Selaimen oma kello: millisekunnit sivun avaamisesta siihen, kun intro on poissa.
     const elapsed = Number(await page.locator('html').getAttribute('data-intro-ms'));
@@ -88,7 +92,7 @@ test.describe('rakennustyökalu', () => {
     await expect(page.locator('#build-pct')).toHaveText('Rakennettu 0 %');
   });
 
-  test('Claude rakentaa koko sivun yhdellä painalluksella, ja lavaa voi napauttaa', async ({ page }) => {
+  test('koko sivun voi rakentaa yhdellä painalluksella, ja lavaa voi napauttaa', async ({ page }) => {
     await open(page);
     await page.locator('#stage').scrollIntoViewIfNeeded();
     await page.locator('#stage').click();
