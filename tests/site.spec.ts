@@ -30,18 +30,51 @@ test.describe('intro', () => {
     await expect(page.locator('#intro')).toContainText('14 lisäosaa odottaa päivitystä');
     // Dynamiitti putoaa ruutuun ennen räjähdystä.
     await expect.poll(() => page.locator('#intro-tnt').evaluate((el) => getComputedStyle(el).opacity), { timeout: 3000 }).toBe('1');
+    await expect(page.locator('#intro .intro-notice.late').last()).toBeVisible();
+    // Elokuvarajaus ja lähtölaskenta ennen räjähdystä.
+    await expect(page.locator('#intro-letterbox')).toContainText('Tehtävä: pura WordPress');
+    await expect(page.locator('#intro-count')).toHaveAttribute('data-t', /^[321]$/, { timeout: 5000 });
+    await expect(page.locator('#intro-straggler')).toBeVisible({ timeout: 6000 });
     await expect(page.locator('#intro-pct')).toHaveText('Purettu 100 %', { timeout: 6000 });
+    await expect(page.locator('#intro-plugins')).toHaveText('0');
     await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 8000 });
     // Selaimen oma kello: millisekunnit sivun avaamisesta siihen, kun intro on poissa.
     const elapsed = Number(await page.locator('html').getAttribute('data-intro-ms'));
-    expect(elapsed).toBeGreaterThan(4000);
-    expect(elapsed).toBeLessThanOrEqual(5500);
+    expect(elapsed).toBeGreaterThan(6000);
+    expect(elapsed).toBeLessThanOrEqual(7600);
     await expect(page.locator('#intro')).toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    // Saavutusilmoitus näkyy hetken oikean sivun päällä ja poistuu itse.
+    await expect(page.locator('#intro-toast')).toBeVisible();
+    await expect(page.locator('#intro-toast')).toContainText('Saavutus avattu');
+    await expect(page.locator('#intro-toast')).toBeHidden({ timeout: 6000 });
 
     await page.reload();
     await expect(page.locator('#intro')).toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  });
+
+  test('intro toimii myös ilman WebGL2:ta (Canvas 2D -varatoteutus)', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+        if (type === 'webgl2') return null;
+        return (original as (...args: unknown[]) => unknown).call(this, type, ...rest);
+      } as typeof original;
+    });
+    await page.goto('/');
+    await expect(page.locator('#intro-pct')).toHaveText('Purettu 100 %', { timeout: 8000 });
+    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 8000 });
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test('intro ei aiheuta konsolivirheitä WebGL-räjähdyksellä', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 9000 });
+    expect(errors).toEqual([]);
   });
 
   test('Ohita purku avaa sivun heti', async ({ page }) => {
@@ -50,6 +83,7 @@ test.describe('intro', () => {
     await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 1000 });
     await expect(page.locator('#intro')).toBeHidden();
     await expect(page.getByRole('link', { name: 'Katso työt' })).toBeVisible();
+    await expect(page.locator('#intro-toast')).toBeHidden();
   });
 });
 
@@ -121,10 +155,14 @@ test.describe('esikatselut', () => {
   });
 
   test('nauhoitus latautuu ja käynnistyy vasta näkyvissä ja pysähtyy poistuessa', async ({ page }) => {
+    const videoRequests: string[] = [];
+    page.on('request', (request) => /\.(webm|mp4)/.test(request.url()) && videoRequests.push(request.url()));
     await open(page);
     const video = page.locator('#tyo-reskontratutka video');
     await expect(video).toHaveAttribute('preload', 'none');
-    expect(await video.evaluate((el: HTMLVideoElement) => el.muted && el.loop && el.paused && el.networkState !== 2)).toBe(true);
+    // Ennen kuin video on näkyvissä, siitä ei ole haettu tavuakaan (readyState 0, ei verkkopyyntöjä).
+    expect(await video.evaluate((el: HTMLVideoElement) => el.muted && el.loop && el.paused && el.readyState === 0)).toBe(true);
+    expect(videoRequests).toEqual([]);
     await video.scrollIntoViewIfNeeded();
     await expect.poll(() => video.evaluate((el: HTMLVideoElement) => !el.paused && el.currentTime > 0), { timeout: 8000 }).toBe(true);
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));

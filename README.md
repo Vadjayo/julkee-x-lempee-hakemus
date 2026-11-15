@@ -6,8 +6,8 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 
 ## Mitä tehtiin
 
-- Yksi staattinen sivu Astrolla ja TypeScriptillä. Ei UI-kehystä eikä animaatiokirjastoa: liike on CSS:ää, Web Animations APIa ja IntersectionObserveria.
-- Intro, jossa oletusteemaisen WordPress-sivun näköinen näkymä räjäytetään dynamiitilla oikean sivun tieltä. Näkyy kerran istunnossa.
+- Yksi staattinen sivu Astrolla ja TypeScriptillä. Ei UI-kehystä eikä animaatiokirjastoa: liike on CSS:ää, Web Animations APIa, IntersectionObserveria ja intron osalta WebGL2:ta.
+- Intro on pelimäinen välianimaatio: oletusteemaisen WordPress-sivun näköinen näkymä lukitaan kohteeksi ja räjäytetään dynamiitilla. Sivu sirpaloituu ja tuli, kipinät ja savu piirretään WebGL2-varjostimilla ilman kirjastoja (`src/scripts/intro-gl.ts`). Jos WebGL2 puuttuu, käytössä on Canvas 2D -varatoteutus. Näkyy kerran istunnossa, ja sen voi ohittaa.
 - Työt-osio (neljä asiakassivustoa, oma SaaS, agentti ja demo), jonka esikatselut on kaapattu oikeilta sivuilta: selainkehys ja puhelinkehys vierivät samassa tahdissa, ja Reskontratutkasta on ruutunauhoitus oikeasta hausta.
 - Ilonan kortissa on havainnekuva, koska tuotteella ei ole julkista käyttöliittymää. Työnhakuagentin kortissa on ote aidosta Telegram-viestistä.
 - Itse rakennettava rakennustyökalu ja selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
@@ -22,7 +22,8 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 | `src/config.ts` | Yhteystiedot ja osoitteet. Build pysähtyy, jos puhelin tai sähköposti puuttuu. |
 | `src/data/content.ts` | Kaikki projektit ja listojen tekstit |
 | `src/components/` | Yksi komponentti per osio |
-| `src/scripts/main.ts` | Kaikki selainlogiikka |
+| `src/scripts/main.ts` | Sivun selainlogiikka |
+| `src/scripts/intro.ts`, `src/scripts/intro-gl.ts` | Intron ohjaus ja WebGL-räjähdys |
 | `scripts/capture.ts` | Esikatselujen kaappaus Playwrightilla |
 | `scripts/lighthouse.ts` | Lighthouse-ajo ja pisteiden tallennus |
 | `scripts/check-text.ts`, `scripts/check-links.ts` | Kieli- ja linkkitarkistukset |
@@ -60,7 +61,8 @@ Skripti pysähtyy virheeseen, jos sivu ei vastaa 200, kuva näyttää tyhjältä
 
 ```sh
 npm run build
-npm test                                             # paikallista buildia vasten
+npm test                                             # paikallista buildia vasten, Chromium
+npm run test:browsers                                # Chromium, Firefox ja WebKit (npx playwright install)
 BASE_URL=https://julkee-x-lempee-hakemus.vercel.app npm test   # tuotantoa vasten
 npm run check:text
 npm run check:links
@@ -71,8 +73,8 @@ npm run lighthouse                                   # kirjoittaa src/data/light
 
 | Tarkistus | Tulos |
 |---|---|
-| Playwright, paikallinen build | 18/18 läpi |
-| Playwright, tuotanto-osoite | 18/18 läpi |
+| Playwright, paikallinen build, Chromium, Firefox ja WebKit | 60/60 läpi |
+| Playwright, tuotanto-osoite, Chromium | 20/20 läpi |
 | Leveydet 375, 768 ja 1440 px | Ei vaakavieritystä, ei päällekkäisiä elementtejä, ei konsolivirheitä. Kuvakaappaukset katsottu läpi. |
 | Lighthouse, mobiili, tuotanto, kolme ajoa | Suorituskyky 100, saavutettavuus 100, parhaat käytännöt 100 |
 | Lighthouse, hakukoneet | 69. Ainoa pisteitä vievä tarkistus on `is-crawlable`, eli tarkoituksellinen `noindex`. |

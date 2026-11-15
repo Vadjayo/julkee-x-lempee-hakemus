@@ -11,7 +11,8 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "capture": "node scripts/capture.ts",
-    "test": "playwright test",
+    "test": "playwright test --project=chromium",
+    "test:browsers": "playwright test",
     "check:text": "node scripts/check-text.ts",
     "check:links": "node scripts/check-links.ts",
     "lighthouse": "node scripts/lighthouse.ts"
