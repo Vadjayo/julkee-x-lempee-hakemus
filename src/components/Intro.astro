@@ -1,55 +1,76 @@
 ---
 /**
- * Feikki-WordPress, joka räjäytetään sivun tieltä dynamiitilla.
+ * Pelimäinen välianimaatio: feikki-WordPress lukitaan kohteeksi ja räjäytetään dynamiitilla.
  * Näkyy vain, kun JavaScript on käytössä, liikettä ei ole rajoitettu
- * ja intro on tässä istunnossa vielä näkemättä (ks. Base.astro).
+ * ja intro on tässä istunnossa vielä näkemättä (ks. Base.astro). Logiikka: scripts/intro.ts.
  */
 ---
 <div class="intro" id="intro" aria-hidden="true">
-  <div class="intro-bar"><span>Ohjausnäkymä</span><span>Päivitykset (14)</span><span>Lisäosat (47)</span><span>Kommentit (0)</span></div>
-  <p class="intro-notice">14 lisäosaa odottaa päivitystä. Yksi niistä kaataa sivun perjantaina</p>
-  <div class="intro-old">
-    <p class="intro-title">Sampon hakemus</p>
-    <p class="intro-sub">Just another WordPress site</p>
+  <div class="intro-page" id="intro-page">
+    <div class="intro-bar"><span>Ohjausnäkymä</span><span>Päivitykset (14)</span><span>Lisäosat (47)</span><span>Kommentit (0)</span></div>
+    <div class="intro-notices">
+      <p class="intro-notice">14 lisäosaa odottaa päivitystä. Yksi niistä kaataa sivun perjantaina</p>
+      <p class="intro-notice late">Varmuuskopiointi epäonnistui. Edellinen onnistui maaliskuussa</p>
+      <p class="intro-notice late">Lisäosa pyytää viiden tähden arvostelua. Jälleen</p>
+      <p class="intro-notice late">PHP-versiosi tuki on päättynyt</p>
+    </div>
+    <div class="intro-old">
+      <p class="intro-title">Sampon hakemus</p>
+      <p class="intro-sub">Just another WordPress site</p>
+    </div>
+    <div class="tnt" id="intro-tnt">
+      <i class="fuse" id="intro-fuse"></i>
+      <i class="spark" id="intro-spark"></i>
+      <span class="sticks"><i></i><i></i><i></i><b class="band"></b><b class="glow" id="intro-glow"></b></span>
+    </div>
   </div>
-  <div class="tnt" id="intro-tnt">
-    <i class="fuse" id="intro-fuse"></i>
-    <i class="spark" id="intro-spark"></i>
-    <span class="sticks"><i></i><i></i><i></i><b class="band"></b><b class="glow" id="intro-glow"></b></span>
-  </div>
-  <div class="blast" id="intro-blast"></div>
+  <div class="vignette" id="intro-vignette"></div>
+  <div class="lock" id="intro-lock"><i></i><i></i><i></i><i></i></div>
+  <canvas class="fx" id="intro-gl"></canvas>
+  <canvas class="fx" id="intro-fx"></canvas>
+  <!-- Viimeinen ilmoitus on hiukkasten päällä, jotta savu ei himmennä sitä. -->
+  <p class="intro-notice straggler" id="intro-straggler">Uusi päivitys saatavilla</p>
+  <div class="count" id="intro-count"></div>
   <div class="flash" id="intro-flash"></div>
+  <div class="letterbox" id="intro-letterbox">
+    <span>Tehtävä: pura WordPress</span>
+    <span>Lisäosia <b id="intro-plugins">47</b></span>
+  </div>
 </div>
 <div class="intro-hud" id="intro-hud">
   <span id="intro-pct" role="status">Purettu 0 %</span>
   <span class="intro-meter"><i id="intro-meter"></i></span>
   <button id="intro-skip" type="button">Ohita purku</button>
 </div>
+<div class="toast" id="intro-toast" aria-hidden="true">
+  <i class="toast-icon"></i>
+  <p><b>Saavutus avattu</b><span>WordPress purettu</span></p>
+</div>
 
 <style>
   .intro, .intro-hud { display: none; }
-  :global(.js:not(.intro-done)) .intro { display: flex; }
+  :global(.js:not(.intro-done)) .intro { display: block; }
   :global(.js:not(.intro-done)) .intro-hud { display: flex; }
   :global(.js:not(.intro-done) body) { overflow: hidden; }
-  .intro {
-    position: fixed; inset: 0; z-index: 50;
-    flex-direction: column;
-    overflow: hidden;
-    background: #f0f0f1; color: #1d2327;
-    font-family: Georgia, 'Times New Roman', serif;
-    transition: opacity 0.4s;
-  }
+  .intro { position: fixed; inset: 0; z-index: 50; overflow: hidden; background: #f0f0f1; transition: opacity 0.4s; }
   .intro.gone { opacity: 0; pointer-events: none; }
   /* Palkki katoaa kerralla. Häivytys jättäisi tekstin hetkeksi liian himmeäksi. */
   :global(.js:not(.intro-done)) .intro-hud.gone { display: none; }
+
+  /* Feikki-WordPress */
+  .intro-page { position: absolute; inset: 0; display: flex; flex-direction: column; color: #1d2327; font-family: Georgia, 'Times New Roman', serif; }
   .intro-bar { background: #1d2327; color: #f0f0f1; font: 13px var(--sans); padding: 8px 16px; display: flex; gap: 18px; flex-wrap: wrap; }
-  .intro-notice { background: #fff; border-left: 4px solid #d63638; margin: 16px; padding: 12px 16px; font: 14px var(--sans); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); }
+  .intro-notices { display: grid; gap: 8px; margin: 14px 16px 0; }
+  .intro-notice { color: #1d2327; background: #fff; border-left: 4px solid #d63638; padding: 10px 16px; font: 14px var(--sans); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); transform-origin: top; }
+  /* Myöhemmät ilmoitukset ovat piilossa, kunnes skripti pudottaa ne paikalleen. */
+  .intro-notice.late, .straggler { visibility: hidden; }
+  .straggler { position: absolute; left: 50%; top: 32%; width: min(320px, 80vw); margin-left: calc(min(320px, 80vw) / -2); }
   .intro-old { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px 24px 200px; }
   .intro-title { font-size: clamp(34px, 6vw, 64px); line-height: 1.1; }
   .intro-sub { font-size: 18px; color: #50575e; margin-top: 10px; }
-  /* Lentävät kirjaimet piirretään pseudoelementtinä, jotta ne ovat pelkkää koristetta myös apuvälineille. */
+  /* Lentävät kirjaimet ja lähtölaskenta piirretään pseudoelementteinä: ne ovat pelkkää koristetta. */
   .intro :global(.ch) { display: inline-block; white-space: pre; }
-  .intro :global(.ch)::before { content: attr(data-t); }
+  .intro :global(.ch)::before, .count::before { content: attr(data-t); }
 
   /* Dynamiittinippu: kolme pötköä, vanne ja sytytyslanka. */
   .tnt { position: absolute; left: 50%; bottom: 96px; width: 84px; margin-left: -42px; opacity: 0; }
@@ -59,8 +80,20 @@
   .glow { position: absolute; inset: 0; border-radius: 5px; background: #fff; opacity: 0; }
   .fuse { display: block; width: 3px; height: 30px; margin: 0 auto; background: #1d2327; border-radius: 2px; transform-origin: bottom; }
   .spark { position: absolute; left: 50%; top: -7px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #ff2b2b; box-shadow: 0 0 0 4px rgba(255, 43, 43, 0.3); opacity: 0; }
-  .blast { position: absolute; left: 50%; bottom: 96px; width: 120px; height: 120px; margin: 0 0 -18px -60px; border-radius: 50%; background: #ff2b2b; opacity: 0; }
+
+  /* Elokuvakerros: tummennus, kohdelukko, hiukkaset, lähtölaskenta, välähdys ja ylärajaus. */
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 62%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0.88) 100%); opacity: 0; }
+  .lock { position: absolute; left: 0; top: 0; opacity: 0; }
+  .lock i { position: absolute; width: 16px; height: 16px; border: 3px solid #ff2b2b; }
+  .lock i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+  .lock i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+  .lock i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+  .lock i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+  .fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .count { position: absolute; left: 0; right: 0; top: 50%; margin-top: -0.62em; text-align: center; font: 900 clamp(130px, 26vw, 250px) / 1 var(--sans); letter-spacing: -0.05em; color: #ff2b2b; text-shadow: 0 0.05em 0 #000, 0 0 80px rgba(0, 0, 0, 0.55); opacity: 0; }
   .flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  .letterbox { position: absolute; left: 0; right: 0; top: 0; height: 56px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; gap: 16px; background: #000; color: var(--fg); font: 13px var(--mono); transform: translateY(-100%); }
+  .letterbox b { color: var(--red); font-weight: 400; font-variant-numeric: tabular-nums; }
 
   .intro-hud {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 51;
@@ -74,4 +107,12 @@
   .intro-meter i { display: block; height: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; }
   #intro-skip { background: none; border: 1px solid #555; color: var(--fg); font: 13px var(--mono); min-height: 40px; padding: 6px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
   #intro-skip:hover { border-color: var(--fg); }
+
+  /* Saavutusilmoitus jää hetkeksi oikean sivun päälle intron jälkeen. */
+  .toast { display: none; position: fixed; right: 16px; top: 16px; z-index: 60; align-items: center; gap: 14px; padding: 12px 18px 12px 14px; background: #000; color: var(--fg); border: 1px solid #3a3a3a; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); pointer-events: none; transform: translateX(130%); }
+  .toast.show { display: flex; }
+  .toast-icon { width: 22px; height: 22px; background: var(--red); border-radius: 4px; transform: rotate(45deg); margin: 0 4px; }
+  .toast p { display: grid; gap: 1px; }
+  .toast b { font: 12px var(--mono); color: var(--dim); font-weight: 400; }
+  .toast span { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
 </style>
