@@ -1,0 +1,58 @@
+---
+import { SKILLS, LEVELS, CERTIFICATES, type Level } from '../data/content';
+import { CONFIG } from '../config';
+const order: Level[] = ['daily', 'shipped', 'learning'];
+---
+<section class="section" id="osaaminen" aria-labelledby="osaaminen-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>03</b> / Osaaminen</p>
+    <h2 id="osaaminen-title" class="rv">Mitä osaan ja millä tasolla</h2>
+    <p class="lead rv">Jaoin osaamisen ilmoituksenne neljään osa-alueeseen. Taso on merkitty rehellisesti.</p>
+
+    <ul class="legend rv" aria-label="Tasojen selitteet">
+      {order.map((l) => <li><i class:list={['lvl', l]} aria-hidden="true"></i>{LEVELS[l]}</li>)}
+    </ul>
+
+    <div class="areas">
+      {SKILLS.map((s) => (
+        <article class="area rv">
+          <h3>{s.area}</h3>
+          <ul>
+            {s.items.map((item) => (
+              <li>
+                <i class:list={['lvl', item.level]} aria-hidden="true"></i>
+                <p><span class="level-name">{LEVELS[item.level]}</span>{item.text}</p>
+              </li>
+            ))}
+          </ul>
+          {s.area === 'Tekoäly työkaluna' && (
+            <p class="certs">
+              <span class="level-name">Sertifikaatit, marraskuu 2026</span>
+              {CERTIFICATES.join(' ja ')} (Anthropic).
+              <a class="textlink" href={CONFIG.credly} target="_blank" rel="noopener">Tarkista Credlystä</a>
+            </p>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 40px; font: 13px var(--mono); color: var(--dim); }
+  .legend li { display: flex; align-items: center; gap: 10px; }
+  .lvl { flex: none; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--fg); }
+  .lvl.daily { background: var(--red); border-color: var(--red); }
+  .lvl.shipped { background: var(--fg); }
+  .lvl.learning { border-style: dashed; border-color: var(--dim); }
+  .areas { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
+  .area { border: 1px solid var(--line); border-radius: 20px; background: var(--card); padding: 26px 24px; }
+  .area ul { display: grid; gap: 16px; margin-top: 20px; }
+  .area li { display: grid; grid-template-columns: 14px 1fr; gap: 14px; align-items: start; }
+  .area li .lvl { margin-top: 3px; }
+  .level-name { display: block; font: 11px var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+  .certs { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+  @media (min-width: 800px) {
+    .areas { grid-template-columns: 1fr 1fr; }
+  }
+</style>
