@@ -57,7 +57,7 @@ export const PROJECTS: Project[] = [
     type: 'Asiakassivusto',
     name: 'Pahkalaranch',
     description:
-      'Huskysafarien varaussivusto. Löysin ja korjasin hinnastosivulta canonical-virheen, joka heikensi hakunäkyvyyttä.',
+      'Muoniolaisen huskytilan varaussivusto. Safarin voi varata suoraan sivun omasta kalenterista.',
     role: 'Tein sivuston ja varauskalenterin yksin, Claude apuna.',
     tech: ['Next.js', 'Oma varauskalenteri', 'Tekninen SEO', 'Vercel'],
     url: 'https://pahkalaranch.fi',
