@@ -7,7 +7,7 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 ## Mitä tehtiin
 
 - Yksi staattinen sivu Astrolla ja TypeScriptillä. Ei UI-kehystä eikä animaatiokirjastoa: liike on CSS:ää, Web Animations APIa ja IntersectionObserveria.
-- Intro, jossa oletusteemaisen WordPress-sivun näköinen näkymä puretaan oikean sivun tieltä. Näkyy kerran istunnossa.
+- Intro, jossa oletusteemaisen WordPress-sivun näköinen näkymä räjäytetään dynamiitilla oikean sivun tieltä. Näkyy kerran istunnossa.
 - Työt-osio, jonka esikatselut on kaapattu oikeilta sivuilta: selainkehys ja puhelinkehys vierivät samassa tahdissa, ja Reskontratutkasta on ruutunauhoitus oikeasta hausta.
 - Ilonan kortissa on havainnekuva, koska tuotteella ei ole julkista käyttöliittymää. Työnhakuagentin kortissa on ote aidosta Telegram-viestistä.
 - Kokemuslaskuri, itse rakennettava rakennustyökalu ja selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
