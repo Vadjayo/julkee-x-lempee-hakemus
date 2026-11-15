@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     type: 'Agentti',
     name: 'Työnhakuagentti',
     description:
-      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Kuvassa on sen arvio teidän ilmoituksestanne.',
+      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on sen aito arvio teidän ilmoituksestanne.',
     note: 'Rakensin omaan käyttöön.',
     tech: ['Claude', 'Tavily', 'Telegram'],
     preview: { kind: 'telegram' },
@@ -106,6 +106,26 @@ export const PROJECTS: Project[] = [
     host: 'reskontratutka.vercel.app',
     preview: { kind: 'site', desktop: reskontraDesktop, mobile: reskontraMobile, video: 'reskontratutka' },
   },
+];
+
+/**
+ * Työnhakuagentin aito Telegram-viesti 15.11.2026 sanasta sanaan: agentin arvio tästä ilmoituksesta.
+ * Tekstiä ei ole muokattu eikä lyhennetty. Myös agentin omat kirjoitusasut ovat tallella.
+ */
+export const JOB_AGENT_MESSAGE: { text: string; kind?: 'title' | 'meta' | 'score' | 'link' }[] = [
+  { text: '100/100 Oman median asiantuntija', kind: 'title' },
+  { text: 'Julkee x Lempee', kind: 'meta' },
+  { text: 'Deadline: ei tiedossa', kind: 'meta' },
+  { text: 'Perustelu:', kind: 'score' },
+  {
+    text: 'Osuu: Junioritason paikka Helsinkissä, jossa sinulla on vahva osaaminen: Astron ja teknisen SEO:n olet vienyt tuotantoon, ja Claude Codea, Verceliä sekä GitHubia käytät päivittäin. Palkka 3600 euroa on junioritasolle sopiva.',
+  },
+  { text: 'Puuttuu: CRM ja analytiikka ovat vasta opettelussa.' },
+  {
+    text: 'Kannattaako hakea: Kyllä, ehdottomasti. Tämä on erittäin hyvä osuma. Korosta hakemuksessasi omaa SaaS-projektia Ilonaa, maksavaa pilottiasiakasta ja neljää asiakassivustoa näyttöinä. Mainitse Claude Codea ja Verceliä käyttävänä päivittäin, Astron ja teknisen SEO:n tuotantoon viemistä. Valmistaudu muuttoon Helsinkiin oikean työn perässä.',
+  },
+  { text: 'Hyväksy → luonnos tulee seuraavan ajon mukana.' },
+  { text: 'https://julkeexlempee.fi/tuhoa-wordpress', kind: 'link' },
 ];
 
 export const SMALL_WORKS = [
