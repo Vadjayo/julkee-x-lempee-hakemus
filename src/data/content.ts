@@ -31,9 +31,9 @@ export const PROJECTS: Project[] = [
     type: 'Asiakassivusto',
     name: 'Go Vuokatti',
     description:
-      'Sotkamolaisen aktiviteettikeskuksen sivustouudistus. Työn alla on tekoälychatbotti, joka vastaa asiakkaille yrityksen omalla tiedolla.',
+      "Sotkamolaisen aktiviteettikeskuksen sivustouudistus, johon kuului myös Piece'n GO -pizzerian sivusto. Vanha sivusto oli WordPressissä. Nyt omistaja rakentaa uudet sivut itse Sanityllä. Työn alla on tekoälychatbotti, joka vastaa asiakkaille yrityksen omalla tiedolla.",
     role: 'Suunnittelin, toteutin ja julkaisin sivuston yksin, Claude apuna.',
-    tech: ['Next.js', 'RAG', 'pgvector'],
+    tech: ['Next.js', 'Sanity', 'RAG', 'pgvector'],
     url: 'https://govuokatti.fi',
     host: 'govuokatti.fi',
     preview: { kind: 'site', desktop: govuokattiDesktop, mobile: govuokattiMobile },
@@ -148,7 +148,7 @@ export const SKILLS: { area: string; items: { level: Level; text: string }[] }[]
     area: 'Verkkosivut ja landing paget',
     items: [
       { level: 'daily', text: 'Claude Code, GitHub, Vercel' },
-      { level: 'shipped', text: 'React, Next.js, Supabase' },
+      { level: 'shipped', text: 'React, Next.js, Sanity, Supabase' },
       { level: 'learning', text: 'Astro. Tämä sivu on ensimmäinen Astro-työni.' },
     ],
   },
