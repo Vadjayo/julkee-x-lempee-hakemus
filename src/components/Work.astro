@@ -1,9 +1,8 @@
 ---
 import { PROJECTS, SMALL_WORKS } from '../data/content';
-import { JOB_AGENT_MESSAGE } from '../data/agent-message';
 import SitePreview from './SitePreview.astro';
 import IlonaMock from './IlonaMock.astro';
-import TelegramMock from './TelegramMock.astro';
+import AgentScreenshot from './AgentScreenshot.astro';
 ---
 <section class="section" id="tyot" aria-labelledby="tyot-title">
   <div class="wrap">
@@ -22,9 +21,7 @@ import TelegramMock from './TelegramMock.astro';
                 <SitePreview name={p.name} host={p.host!} desktop={p.preview.desktop} mobile={p.preview.mobile} video={p.preview.video} />
               )}
               {p.preview.kind === 'ilona' && <IlonaMock />}
-              {p.preview.kind === 'telegram' && (
-                <TelegramMock bot={p.name} lines={JOB_AGENT_MESSAGE} caption="Aito viesti 20.10.2026. Yritysten nimet on peitetty." />
-              )}
+              {p.preview.kind === 'telegram' && <AgentScreenshot />}
             </div>
             <div class="card-body">
               <p class="type">{p.type}</p>

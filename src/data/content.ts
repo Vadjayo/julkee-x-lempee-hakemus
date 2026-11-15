@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     type: 'Agentti',
     name: 'Työnhakuagentti',
     description:
-      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on aito viesti.',
+      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Kuvassa on sen arvio teidän ilmoituksestanne.',
     note: 'Rakensin omaan käyttöön.',
     tech: ['Claude', 'Tavily', 'Telegram'],
     preview: { kind: 'telegram' },

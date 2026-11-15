@@ -183,12 +183,13 @@ test.describe('esikatselut', () => {
     await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.paused)).toBe(true);
   });
 
-  test('agentin viesti ilmestyy rivi kerrallaan ja Ilona on merkitty havainnekuvaksi', async ({ page }) => {
+  test('agentin kortissa on aito kuvakaappaus tekstivastineineen ja Ilona on merkitty havainnekuvaksi', async ({ page }) => {
     await open(page);
-    const telegram = page.locator('#tyo-tyonhakuagentti .tg');
-    await telegram.scrollIntoViewIfNeeded();
-    await expect(telegram).toHaveClass(/playing/);
-    await expect(telegram.locator('.tl').last()).toHaveCSS('opacity', '1', { timeout: 8000 });
+    const shot = page.locator('#tyo-tyonhakuagentti img');
+    await shot.scrollIntoViewIfNeeded();
+    await expect(shot).toBeVisible();
+    await expect(shot).toHaveAttribute('alt', /100\/100 Oman median asiantuntija, Julkee x Lempee/);
+    await expect.poll(() => shot.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
     await expect(page.locator('#tyo-ilona')).toContainText('Havainnekuva');
   });
 });
@@ -219,7 +220,7 @@ test.describe('reduced motion', () => {
     expect(await video.evaluate((el: HTMLVideoElement) => el.paused && el.currentTime === 0)).toBe(true);
     await expect(page.locator('#tyo-reskontratutka .browser img')).toBeVisible();
     for (const el of await page.locator('.rv').all()) await expect(el).toHaveCSS('opacity', '1');
-    await expect(page.locator('#tyo-tyonhakuagentti .tl').first()).toHaveCSS('opacity', '1');
+    await expect(page.locator('#tyo-tyonhakuagentti img')).toBeVisible();
   });
 });
 
@@ -232,7 +233,7 @@ test.describe('ilman JavaScriptiä', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Nämä ovat jo tuotannossa' })).toBeVisible();
     await expect(page.locator('#yhteys a[href^="tel:"]')).toBeVisible();
-    await expect(page.locator('#tyo-tyonhakuagentti .tl').first()).toHaveCSS('opacity', '1');
+    await expect(page.locator('#tyo-tyonhakuagentti img')).toBeVisible();
   });
 });
 
