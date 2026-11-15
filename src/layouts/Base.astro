@@ -8,24 +8,58 @@ const description =
   'Sampo Rahjan hakemus Julkee x Lempeen oman median asiantuntijaksi. Tuotantoon viedyt asiakassivustot, omat tuotteet ja agentit yhdellä sivulla.';
 const canonical = new URL('/', Astro.site).href;
 
-const person = {
+// Rakenteinen data: sivu on ProfilePage, jonka pääkohde on Person. Molemmat ovat graafin
+// ylätasolla, jotta sekä hakukoneet että yksinkertaiset tarkistimet löytävät Person-merkinnän.
+const personId = `${canonical}#sampo-rahja`;
+const structuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: CONFIG.name,
-  url: canonical,
-  email: CONFIG.emailHref,
-  telephone: CONFIG.phone.replace(/\s/g, ''),
-  address: { '@type': 'PostalAddress', addressLocality: 'Oulu', addressCountry: 'FI' },
-  description: 'Rakentaa verkkosivuja, tekoälyagentteja ja automaatioita ja vie ne tuotantoon.',
-  knowsLanguage: 'fi',
-  knowsAbout: ['Verkkosivut', 'Tekninen hakukoneoptimointi', 'Tekoälyagentit', 'Automaatiot', 'Claude Code', 'Astro', 'Next.js', 'Vercel'],
-  hasCredential: CERTIFICATES.map((name) => ({
-    '@type': 'EducationalOccupationalCredential',
-    name,
-    credentialCategory: 'certificate',
-    recognizedBy: { '@type': 'Organization', name: 'Anthropic' },
-  })),
-  sameAs: [CONFIG.linkedin, CONFIG.credly, 'https://github.com/Vadjayo'],
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: CONFIG.name,
+      givenName: 'Sampo',
+      familyName: 'Rahja',
+      url: canonical,
+      mainEntityOfPage: { '@id': `${canonical}#sivu` },
+      email: CONFIG.emailHref,
+      telephone: CONFIG.phone.replace(/\s/g, ''),
+      address: { '@type': 'PostalAddress', addressLocality: 'Oulu', addressCountry: 'FI' },
+      description: 'Rakentaa verkkosivuja, tekoälyagentteja ja automaatioita ja vie ne tuotantoon.',
+      knowsLanguage: 'fi',
+      knowsAbout: [
+        'Verkkosivut',
+        'Tekninen hakukoneoptimointi',
+        'Tekoälyagentit',
+        'Automaatiot',
+        'Claude Code',
+        'Astro',
+        'Next.js',
+        'React',
+        'Sanity',
+        'Supabase',
+        'n8n',
+        'Vercel',
+      ],
+      hasCredential: CERTIFICATES.map((name) => ({
+        '@type': 'EducationalOccupationalCredential',
+        name,
+        credentialCategory: 'certificate',
+        recognizedBy: { '@type': 'Organization', name: 'Anthropic' },
+      })),
+      sameAs: [CONFIG.linkedin, CONFIG.credly, 'https://github.com/Vadjayo'],
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': `${canonical}#sivu`,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: 'fi',
+      dateModified: new Date().toISOString(),
+      mainEntity: { '@id': personId },
+    },
+  ],
 };
 ---
 <!doctype html>
@@ -44,7 +78,7 @@ const person = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(person)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
     <script is:inline>
       // Ajetaan ennen ensimmäistä piirtoa: intro näytetään vain kerran istunnossa eikä koskaan, jos liikettä on rajoitettu.
       (function () {

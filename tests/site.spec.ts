@@ -298,10 +298,19 @@ test('rakenne kestää tarkastelun: yksi h1, noindex, kelvollinen JSON-LD, otsik
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('html')).toHaveAttribute('lang', 'fi');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
-  const person = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
-  expect(person['@type']).toBe('Person');
+  // Rakenteinen data on palvelimen lähettämässä HTML:ssä, ei skriptin lisäämää.
+  const html = await (await page.request.get('/')).text();
+  const raw = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+  expect(raw, 'JSON-LD puuttuu lähde-HTML:stä').toBeTruthy();
+  const graph = JSON.parse(raw!)['@graph'] as Record<string, any>[];
+  const person = graph.find((node) => node['@type'] === 'Person')!;
+  const profile = graph.find((node) => node['@type'] === 'ProfilePage')!;
   expect(person.name).toBe('Sampo Rahja');
   expect(person.telephone).toMatch(/^\+358\d+$/);
+  expect(person.email).toMatch(/^mailto:/);
+  expect(person.sameAs.length).toBeGreaterThanOrEqual(3);
+  expect(person.hasCredential).toHaveLength(2);
+  expect(profile.mainEntity['@id']).toBe(person['@id']);
 
   const levels = await page.evaluate(() =>
     [...document.querySelectorAll('h1, h2, h3, h4')].map((h) => Number(h.tagName[1])),
