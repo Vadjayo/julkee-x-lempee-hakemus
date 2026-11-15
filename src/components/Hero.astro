@@ -25,6 +25,8 @@
 <style>
   .hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 96px 0 72px; }
   .hero .wrap { width: 100%; }
+  /* Koko on mitoitettu niin, että pidempi rivi mahtuu työpöydällä yhdelle riville. */
+  .hero h1 { font-size: clamp(40px, 7.1vw, 90px); }
   .hero-kicker { display: flex; align-items: center; gap: 4px; margin-left: -14px; }
   .line { display: block; overflow: hidden; padding-bottom: 0.08em; }
   .line > span { display: inline-block; }
