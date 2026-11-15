@@ -20,8 +20,9 @@ import { MATCH } from '../data/content';
   .match { margin-top: 48px; }
   .row { display: grid; grid-template-columns: 36px minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); align-items: start; }
   .tick { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--red); background: var(--red); display: grid; place-items: center; font: 700 14px var(--mono); color: #000; }
-  :global(.js) .tick { transition: background 0.4s 0.35s, color 0.4s 0.35s, border-color 0.4s 0.35s; }
-  :global(.js) .row:not(.in) .tick { background: transparent; color: transparent; border-color: var(--line); }
+  /* Merkki napsahtaa paikalleen pienellä ylilyönnillä. */
+  :global(.js) .tick { transition: background 0.3s 0.3s, color 0.3s 0.3s, border-color 0.3s 0.3s, transform 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  :global(.js) .row:not(.in) .tick { background: transparent; color: transparent; border-color: var(--line); transform: scale(0.5); }
   dt { color: var(--dim); }
   dd { font-weight: 600; }
   @media (max-width: 640px) {
@@ -30,6 +31,6 @@ import { MATCH } from '../data/content';
   }
   @media (prefers-reduced-motion: reduce) {
     :global(.js) .tick { transition: none; }
-    :global(.js) .row:not(.in) .tick { background: var(--red); color: #000; border-color: var(--red); }
+    :global(.js) .row:not(.in) .tick { background: var(--red); color: #000; border-color: var(--red); transform: none; }
   }
 </style>

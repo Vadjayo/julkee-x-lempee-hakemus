@@ -13,6 +13,7 @@ const { bot, lines, caption } = Astro.props;
     <span class="tg-sub">botti</span>
   </div>
   <div class="tg-body">
+    <div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="msg">
       {lines.map((line, i) => <p class:list={['tl', line.kind]} style={`--i:${i}`}>{line.text}</p>)}
     </div>
@@ -35,11 +36,25 @@ const { bot, lines, caption } = Astro.props;
   .tl.score { color: var(--fg); font-weight: 600; }
   figcaption { padding: 0 12px 12px; font: 11px var(--mono); color: var(--dim); }
 
-  /* Rivit ilmestyvät yksi kerrallaan, kun kortti tulee näkyviin. */
-  :global(.js) .tg:not(.playing) .tl { opacity: 0; }
-  :global(.js) .tg.playing .tl { animation: line 0.45s var(--ease) both; animation-delay: calc(var(--i) * 0.42s); }
-  @keyframes line { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .tg-body { position: relative; }
+  .typing { display: none; position: absolute; left: 12px; top: 12px; gap: 4px; padding: 10px 12px; background: #1c1c1c; border: 1px solid #2c2c2c; border-radius: 4px 14px 14px 14px; }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); }
+
+  /* Ensin botti "kirjoittaa", sitten viesti ilmestyy ja rivit tulevat yksi kerrallaan. */
+  :global(.js) .typing { display: flex; opacity: 0; }
+  :global(.js) .tg:not(.playing) .msg, :global(.js) .tg:not(.playing) .tl { opacity: 0; }
+  :global(.js) .tg.playing .typing { animation: typing 1.3s linear both; }
+  :global(.js) .tg.playing .typing i { animation: dot 0.9s ease-in-out infinite; }
+  :global(.js) .tg.playing .typing i:nth-child(2) { animation-delay: 0.15s; }
+  :global(.js) .tg.playing .typing i:nth-child(3) { animation-delay: 0.3s; }
+  :global(.js) .tg.playing .msg { animation: msg 0.5s 1.3s var(--ease) both; transform-origin: top left; }
+  :global(.js) .tg.playing .tl { animation: line 0.5s var(--ease) both; animation-delay: calc(1.45s + var(--i) * 0.32s); }
+  @keyframes typing { 0% { opacity: 0; } 10%, 90% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes dot { 0%, 60%, 100% { transform: none; opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  @keyframes msg { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+  @keyframes line { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    :global(.js) .tg .tl { opacity: 1 !important; animation: none !important; }
+    :global(.js) .typing { display: none; }
+    :global(.js) .tg .msg, :global(.js) .tg .tl { opacity: 1 !important; animation: none !important; }
   }
 </style>

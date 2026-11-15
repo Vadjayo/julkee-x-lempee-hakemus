@@ -7,7 +7,8 @@
   --red: #ff2b2b;
   --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Yksi yhteinen käyrä kaikelle liikkeelle: nopea lähtö, pitkä pehmeä pysähdys. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -73,8 +74,10 @@ h4 { font-size: 18px; letter-spacing: -0.01em; line-height: 1.2; }
 }
 
 /* Vierityksessä ilmestyvät elementit. Ilman JavaScriptiä kaikki näkyy heti. */
-.js .rv { opacity: 0; transform: translateY(24px); transition: opacity 0.7s, transform 0.7s var(--ease); }
+.js .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease-out, transform 0.9s var(--ease); }
 .js .rv.in { opacity: 1; transform: none; }
+/* Otsikot ja ingressit ovat paikallaan heti. Liike on varattu sisällölle, jota se oikeasti esittelee. */
+.js h2.rv, .js h3.rv, .js .lead.rv { opacity: 1; transform: none; transition: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
