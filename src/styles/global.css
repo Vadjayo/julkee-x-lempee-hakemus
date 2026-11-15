@@ -1,0 +1,85 @@
+:root {
+  --bg: #000;
+  --fg: #f4f1ea;
+  --dim: #a09c92;
+  --line: #2a2a2a;
+  --card: #0d0d0d;
+  --red: #ff2b2b;
+  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; border-radius: 4px; }
+img, video { display: block; max-width: 100%; }
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+h1, h2, h3, h4 { font-weight: 800; letter-spacing: -0.03em; line-height: 1.04; text-wrap: balance; }
+h1 { font-size: clamp(40px, 8vw, 104px); }
+h2 { font-size: clamp(32px, 5.2vw, 64px); max-width: 18ch; }
+h3 { font-size: 22px; letter-spacing: -0.01em; line-height: 1.2; }
+h4 { font-size: 18px; letter-spacing: -0.01em; line-height: 1.2; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; border-top: 1px solid var(--line); }
+.kicker {
+  font: 13px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 20px;
+}
+.kicker b { color: var(--red); font-weight: 400; }
+.lead { font-size: clamp(18px, 2.2vw, 23px); color: var(--dim); max-width: 60ch; margin-top: 28px; text-wrap: pretty; }
+.lead strong { color: var(--fg); font-weight: 600; }
+.mono { font-family: var(--mono); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  font: 600 16px var(--sans);
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--fg);
+  background: var(--fg);
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), border-color 0.2s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: #4a4a4a; }
+.btn.ghost:hover { border-color: var(--fg); }
+.btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.textlink { text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 4px; }
+.textlink:hover { text-decoration-thickness: 2px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags li { font: 12px var(--mono); color: var(--dim); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* Vierityksessä ilmestyvät elementit. Ilman JavaScriptiä kaikki näkyy heti. */
+.js .rv { opacity: 0; transform: translateY(24px); transition: opacity 0.7s, transform 0.7s var(--ease); }
+.js .rv.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .rv { opacity: 1; transform: none; transition: none; }
+  .btn { transition: none; }
+}
+@media (max-width: 640px) {
+  .section { padding: 72px 0; }
+  .wrap { padding: 0 20px; }
+}

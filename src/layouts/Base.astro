@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+import { CONFIG } from '../config';
+import { CERTIFICATES } from '../data/content';
+
+const title = 'Sampo Rahja: hakemus Julkee x Lempeelle';
+const description =
+  'Sampo Rahjan hakemus Julkee x Lempeen oman median asiantuntijaksi. Tuotantoon viedyt asiakassivustot, omat tuotteet ja agentit yhdellä sivulla.';
+const canonical = new URL('/', Astro.site).href;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: CONFIG.name,
+  url: canonical,
+  email: CONFIG.emailHref,
+  telephone: CONFIG.phone.replace(/\s/g, ''),
+  address: { '@type': 'PostalAddress', addressLocality: 'Oulu', addressCountry: 'FI' },
+  description: 'Rakentaa verkkosivuja, tekoälyagentteja ja automaatioita ja vie ne tuotantoon.',
+  knowsLanguage: 'fi',
+  knowsAbout: ['Verkkosivut', 'Tekninen hakukoneoptimointi', 'Tekoälyagentit', 'Automaatiot', 'Claude Code', 'Astro', 'Next.js', 'Vercel'],
+  hasCredential: CERTIFICATES.map((name) => ({
+    '@type': 'EducationalOccupationalCredential',
+    name,
+    credentialCategory: 'certificate',
+    recognizedBy: { '@type': 'Organization', name: 'Anthropic' },
+  })),
+  sameAs: [CONFIG.linkedin, CONFIG.credly, 'https://github.com/Vadjayo'],
+};
+---
+<!doctype html>
+<html lang="fi" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:locale" content="fi_FI" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(person)} />
+    <script is:inline>
+      // Ajetaan ennen ensimmäistä piirtoa: intro näytetään vain kerran istunnossa eikä koskaan, jos liikettä on rajoitettu.
+      (function () {
+        var root = document.documentElement;
+        root.classList.replace('no-js', 'js');
+        var seen = false;
+        try {
+          seen = sessionStorage.getItem('intro-seen') === '1';
+        } catch (e) {}
+        if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('intro-done');
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

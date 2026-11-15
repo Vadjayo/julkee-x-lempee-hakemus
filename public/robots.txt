@@ -1,0 +1,3 @@
+# Sivu on henkilökohtainen työhakemus. Sisältö on merkitty noindex-metatiedolla.
+User-agent: *
+Allow: /
