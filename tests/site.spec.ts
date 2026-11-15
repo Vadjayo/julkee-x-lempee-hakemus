@@ -234,24 +234,33 @@ for (const width of [375, 768, 1440]) {
   });
 }
 
-test('ensimmäinen lataus on alle 300 kt ilman videoita, eikä evästeitä aseteta', async ({ page, context }) => {
-  let bytes = 0;
-  const videos: string[] = [];
-  page.on('response', async (response) => {
-    if (/\.(webm|mp4)/.test(response.url())) videos.push(response.url());
-    const body = await response.body().catch(() => null);
-    if (!body) return;
-    // body() palauttaa puretun sisällön. Tekstitiedostot lasketaan gzip-pakattuina,
-    // koska niin ne siirtyvät tuotannossa. Kuvat ovat jo valmiiksi pakattuja.
-    const isText = /html|javascript|css|json|svg/.test(response.headers()['content-type'] ?? '');
-    bytes += isText ? gzipSync(body).length : body.length;
+for (const device of [
+  { name: 'työpöytä', viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
+  { name: 'puhelin, tiheä näyttö', viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true },
+]) {
+  test.describe(`ensimmäinen lataus: ${device.name}`, () => {
+    test.use({ viewport: device.viewport, deviceScaleFactor: device.deviceScaleFactor, isMobile: device.isMobile ?? false });
+
+    test('alle 300 kt ilman videoita, eikä evästeitä aseteta', async ({ page, context }) => {
+      let bytes = 0;
+      const videos: string[] = [];
+      page.on('response', async (response) => {
+        if (/\.(webm|mp4)/.test(response.url())) videos.push(response.url());
+        const body = await response.body().catch(() => null);
+        if (!body) return;
+        // body() palauttaa puretun sisällön. Tekstitiedostot lasketaan gzip-pakattuina,
+        // koska niin ne siirtyvät tuotannossa. Kuvat ovat jo valmiiksi pakattuja.
+        const isText = /html|javascript|css|json|svg/.test(response.headers()['content-type'] ?? '');
+        bytes += isText ? gzipSync(body).length : body.length;
+      });
+      await page.goto('/', { waitUntil: 'load' });
+      await page.waitForTimeout(1000);
+      expect(videos).toEqual([]);
+      expect(bytes / 1024).toBeLessThan(300);
+      expect(await context.cookies()).toEqual([]);
+    });
   });
-  await page.goto('/', { waitUntil: 'load' });
-  await page.waitForTimeout(500);
-  expect(videos).toEqual([]);
-  expect(bytes / 1024).toBeLessThan(300);
-  expect(await context.cookies()).toEqual([]);
-});
+}
 
 test('rakenne kestää tarkastelun: yksi h1, noindex, kelvollinen JSON-LD, otsikkotasot järjestyksessä', async ({ page }) => {
   await open(page);

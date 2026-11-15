@@ -41,8 +41,9 @@ const TARGETS: Target[] = [
 const IMG_DIR = 'src/assets/captures';
 const VIDEO_DIR = 'public/video';
 const TMP_DIR = '.capture-tmp';
-const MAX_DESKTOP_HEIGHT = 5200;
-const MAX_MOBILE_HEIGHT = 4200;
+// Pituusraja pitää esikatselukuvat kevyinä: ensimmäinen lataus saa olla enintään 300 kt.
+const MAX_DESKTOP_HEIGHT = 3800;
+const MAX_MOBILE_HEIGHT = 3000;
 const MAX_VIDEO_SECONDS = 10;
 const MAX_VIDEO_BYTES = 1.5 * 1024 * 1024;
 

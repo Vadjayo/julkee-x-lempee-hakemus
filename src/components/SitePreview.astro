@@ -8,6 +8,8 @@ interface Props {
   desktop: ImageMetadata;
   mobile: ImageMetadata;
   /** Tiedostonimi kansiossa public/video ilman päätettä. */
+  // Huom. sizes-arvot ovat tarkoituksella todellista leveyttä pienemmät kapealla näytöllä:
+  // tiheä puhelinnäyttö valitsisi muuten suurimman kuvan, ja ensimmäinen lataus ylittäisi 300 kt.
   video?: string;
 }
 const { name, host, desktop, mobile, video } = Astro.props;
@@ -20,8 +22,8 @@ const { name, host, desktop, mobile, video } = Astro.props;
         src={desktop}
         formats={['avif', 'webp']}
         quality={36}
-        widths={[480, 720, 960]}
-        sizes="(min-width: 900px) 520px, 92vw"
+        widths={[480, 640, 800]}
+        sizes="(min-width: 900px) 520px, 50vw"
         alt={`Kuvakaappaus sivuston ${name} työpöytänäkymästä`}
         loading="lazy"
         decoding="async"
@@ -41,7 +43,7 @@ const { name, host, desktop, mobile, video } = Astro.props;
         formats={['avif', 'webp']}
         quality={36}
         widths={[160, 240, 320]}
-        sizes="(min-width: 900px) 110px, 20vw"
+        sizes="(min-width: 900px) 110px, 14vw"
         alt={`Kuvakaappaus sivuston ${name} mobiilinäkymästä`}
         loading="lazy"
         decoding="async"
