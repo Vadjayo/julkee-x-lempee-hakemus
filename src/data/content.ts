@@ -15,7 +15,8 @@ export type Project = {
   type: string;
   name: string;
   description: string;
-  role: string;
+  /** Lisätieto, jos kortissa on jotain yhteisestä roolista poikkeavaa. Yhteinen rooli kerrotaan osion ingressissä. */
+  note?: string;
   tech: string[];
   /** Julkinen osoite. Jos puuttuu, kortti ei ole linkki. */
   url?: string;
@@ -34,7 +35,6 @@ export const PROJECTS: Project[] = [
     name: 'Go Vuokatti',
     description:
       'Sotkamolaisen aktiviteettikeskuksen sivustouudistus. Vanha sivusto oli WordPressissä. Nyt omistaja rakentaa uudet sivut itse Sanityllä. Työn alla on tekoälychatbotti, joka vastaa asiakkaille yrityksen omalla tiedolla.',
-    role: 'Suunnittelin, toteutin ja julkaisin sivuston yksin, Claude apuna.',
     tech: ['Next.js', 'Sanity', 'RAG', 'pgvector'],
     url: 'https://govuokatti.fi',
     host: 'govuokatti.fi',
@@ -46,7 +46,6 @@ export const PROJECTS: Project[] = [
     name: "Piece'n GO",
     description:
       'Vuokattilaisen pizzabuffetin sivusto. Syntyi samassa uudistuksessa Go Vuokatin kanssa, ja omistaja päivittää hinnat ja sisällöt itse Sanityllä.',
-    role: 'Suunnittelin, toteutin ja julkaisin sivuston yksin, Claude apuna.',
     tech: ['Next.js', 'Sanity'],
     url: 'https://piecengo.fi',
     host: 'piecengo.fi',
@@ -58,7 +57,7 @@ export const PROJECTS: Project[] = [
     name: 'Pahkalaranch',
     description:
       'Muoniolaisen huskytilan varaussivusto. Safarin voi varata suoraan sivun omasta kalenterista.',
-    role: 'Tein sivuston ja varauskalenterin yksin, Claude apuna.',
+    note: 'Rakensin myös varauskalenterin itse.',
     tech: ['Next.js', 'Oma varauskalenteri', 'Tekninen SEO', 'Vercel'],
     url: 'https://pahkalaranch.fi',
     host: 'pahkalaranch.fi',
@@ -70,7 +69,6 @@ export const PROJECTS: Project[] = [
     name: 'pekkapudas.fi',
     description:
       'Kokkolalaisen kirjailijan ja muusikon Pekka Pudaksen kotisivu. Kirjat, näytelmät, musiikki ja radio-ohjelmat löytyvät yhdestä paikasta.',
-    role: 'Suunnittelin, toteutin ja julkaisin sivuston yksin, Claude apuna.',
     tech: ['Next.js'],
     url: 'https://pekkapudas.fi',
     host: 'pekkapudas.fi',
@@ -82,7 +80,7 @@ export const PROJECTS: Project[] = [
     name: 'Ilona',
     description:
       'Suomenkielinen tekoälypuhelinvastaaja yrityksille. Vastaa soittajalle yrityksen omilla tiedoilla, kerää liidit ja lähettää omistajalle yhteenvedon tekstiviestinä. Maksava pilottiasiakas, yli 1700 automaattista testiä ja tietoturva-auditointi. Käytössä Go Vuokatilla.',
-    role: 'Oma tuote ideasta tuotantoon. Ei julkista käyttöliittymää, joten kuva on havainnekuva.',
+    note: 'Oma tuote ideasta tuotantoon. Julkista käyttöliittymää ei ole, joten kuva on havainnekuva.',
     tech: ['Claude', 'ElevenLabs', 'Telnyx', 'Supabase', 'Railway'],
     preview: { kind: 'ilona' },
   },
@@ -92,7 +90,7 @@ export const PROJECTS: Project[] = [
     name: 'Työnhakuagentti',
     description:
       'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on ote aidosta viestistä.',
-    role: 'Rakensin omaan käyttöön yksin, Claude apuna.',
+    note: 'Rakensin omaan käyttöön.',
     tech: ['Claude', 'Tavily', 'Telegram'],
     preview: { kind: 'telegram' },
   },
@@ -102,7 +100,7 @@ export const PROJECTS: Project[] = [
     name: 'Reskontratutka',
     description:
       'Yritysanalyysi PRH:n avoimesta datasta. Tekoälyn vastaukset validoidaan Zod-skeemalla, jotta luvut eivät ole keksittyjä.',
-    role: 'Suunnittelin ja toteutin yksin, Claude apuna. Nauhoitus on oikeasta hausta.',
+    note: 'Nauhoitus on oikeasta hausta.',
     tech: ['PRH:n avoin data', 'Zod', 'Vercel'],
     url: 'https://reskontratutka.vercel.app',
     host: 'reskontratutka.vercel.app',
@@ -187,7 +185,7 @@ export const SKILLS: { area: string; items: { level: Level; text: string }[] }[]
     items: [
       { level: 'daily', text: 'Claude API, agentit ja MCP' },
       { level: 'daily', text: 'Promptien ja työkalukutsujen suunnittelu, automaattitestit' },
-      { level: 'learning', text: 'Sertifikaatit Claude Architect Foundations ja Claude Architect Professional. Suoritus on kesken.' },
+      { level: 'learning', text: 'Sertifikaatit Claude Certified Architect - Foundations ja Claude Certified Architect - Professional. Suoritus on kesken.' },
     ],
   },
 ];
@@ -201,7 +199,7 @@ export const PIPELINE = [
   { name: 'Tarve', text: 'Selvitän, mitä sivun pitää saada aikaan ja kenelle.' },
   { name: 'Claude Code', text: 'Kirjoitan tehtävänannon. Claude toteuttaa, minä luen ja korjaan.' },
   { name: 'GitHub', text: 'Jokainen muutos on oma commitinsa, joten historiasta näkee, mitä tehtiin ja miksi.' },
-  { name: 'Vercel-esikatselu', text: 'Katson muutoksen esikatseluosoitteesta puhelimella ja koneella.' },
+  { name: 'Vercel-esikatselu', text: 'Jokainen haara saa oman esikatseluosoitteen, josta muutoksen voi katsoa ennen julkaisua.' },
   { name: 'Julkaisu', text: 'Julkaisu on yksi komento. Perjantainakin.' },
   { name: 'Mittaus', text: 'Ajan testit ja Lighthousen ja korjaan, mitä ne löytävät.' },
 ];
@@ -221,7 +219,7 @@ export const MATCH = [
     want: 'Neuvonantajan ote',
     have: 'Myyntityö opetti kuuntelemaan. Jos asiakas tarvitsee muuta kuin pyytää, sanon sen.',
   },
-  { want: 'Selkeä suomi', have: 'Luit tänne asti.' },
+  { want: 'Selkeä suomi', have: 'Luitte tänne asti.' },
 ];
 
 export const PRACTICAL = [
