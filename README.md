@@ -76,9 +76,9 @@ npm run lighthouse                                   # kirjoittaa src/data/light
 | Leveydet 375, 768 ja 1440 px | Ei vaakavieritystä, ei päällekkäisiä elementtejä, ei konsolivirheitä. Kuvakaappaukset katsottu läpi. |
 | Lighthouse, mobiili, tuotanto, kolme ajoa | Suorituskyky 100, saavutettavuus 100, parhaat käytännöt 100 |
 | Lighthouse, hakukoneet | 69. Ainoa pisteitä vievä tarkistus on `is-crawlable`, eli tarkoituksellinen `noindex`. |
-| Ensimmäinen lataus ilman videoita | Alle 300 kt (testin raja), tuotannossa noin LATAUS kt |
+| Ensimmäinen lataus ilman videoita | 249 kt siirrettynä tuotannosta puhelinemulaatiolla (raja 300 kt). Tästä 19 kt ennen load-tapahtumaa, loput laiskasti ladattuja esikatselukuvia. |
 | Ajatusviivat ja otsikoiden välimerkit | Ei löytynyt |
-| Ulkoiset linkit | LINKIT |
+| Ulkoiset linkit | 7/8 vastasi 200. LinkedIn vastasi 999, ks. alla. |
 | `astro check` | 0 virhettä, 0 varoitusta |
 
 Playwright kattaa nämä: intro ja ohitus, punainen piste, kokemuslaskuri, rakennustyökalu, esikatselujen käynnistyminen ja pysähtyminen, videon laiska lataus, yhteystietolinkit, reduced motion, sivu ilman JavaScriptiä, sivun rakenne ja selaimessa mitatut luvut.

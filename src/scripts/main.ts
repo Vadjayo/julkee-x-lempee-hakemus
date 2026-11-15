@@ -57,9 +57,9 @@ function intro(): void {
     node.replaceWith(fragment);
   }
 
-  // Kokonaiskesto: 700 + 1800 + 150 + 400 ms = 3,05 s.
-  const HOLD = 700;
-  const FALL = 1800;
+  // Kokonaiskesto: 500 + 1700 + 150 + 400 ms = 2,75 s. Varaa jää sivun lataukselle, jotta raja 3,5 s pitää.
+  const HOLD = 500;
+  const FALL = 1700;
   setTimeout(() => {
     if (done) return;
     for (const char of chars) {
@@ -68,7 +68,7 @@ function intro(): void {
       const duration = 700 + Math.random() * 500;
       char.animate([{ transform: 'none' }, { transform: `translate(${dx}px, 110vh) rotate(${rot}deg)` }], {
         duration,
-        delay: Math.random() * (FALL - 1200),
+        delay: Math.random() * (FALL - 1150),
         easing: 'cubic-bezier(.5,0,.9,.5)',
         fill: 'forwards',
       });
