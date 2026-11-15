@@ -90,7 +90,7 @@ void main() {
   outColor = vec4(color * vFade, vFade);
 }`;
 
-const PARTICLE_VS = `#version 300 es
+export const PARTICLE_VS = `#version 300 es
 in vec2 aCorner;
 in vec4 aSeed;
 in float aKind;
@@ -156,7 +156,7 @@ void main() {
   vKind = aKind;
 }`;
 
-const PARTICLE_FS = `#version 300 es
+export const PARTICLE_FS = `#version 300 es
 precision mediump float;
 in vec2 vCorner;
 in vec4 vSeed;
@@ -213,7 +213,7 @@ export type Shatter = {
   stop(): void;
 };
 
-function program(gl: WebGL2RenderingContext, vertex: string, fragment: string): WebGLProgram | null {
+export function program(gl: WebGL2RenderingContext, vertex: string, fragment: string): WebGLProgram | null {
   const build = (type: number, source: string) => {
     const shader = gl.createShader(type)!;
     gl.shaderSource(shader, source);
@@ -394,52 +394,100 @@ export function createShatter(canvas: HTMLCanvasElement): Shatter | null {
   };
 }
 
+export type PaintOptions = {
+  /** Kuvan koko CSS-pikseleinä ja vasemman yläkulman sijainti ikkunassa. */
+  width: number;
+  height: number;
+  originX: number;
+  originY: number;
+  background?: string;
+  /** Piirrä myös elementit, joilla on visibility: hidden (rakennustyökalun vielä asettamattomat palat). */
+  includeHidden?: boolean;
+  /** Valitsin elementeille, joita ei piirretä. */
+  skip?: string;
+};
+
 /**
- * Piirtää feikki-WordPressin kuvaksi DOM:n mittojen mukaan: taustat suorakulmioina
+ * Piirtää DOM-puun kuvaksi sen omien mittojen mukaan: taustat ja reunat suorakulmioina
  * ja tekstit sana kerrallaan täsmälleen siihen kohtaan, jossa selain ne näyttää.
+ * Tämä riittää näille yksinkertaisille näkymille eikä vaadi kirjastoa.
  */
-export function snapshotPage(page: HTMLElement): HTMLCanvasElement {
+export function paintDom(root: HTMLElement, options: PaintOptions): HTMLCanvasElement {
   const dpr = Math.min(devicePixelRatio || 1, 2);
   const canvas = document.createElement('canvas');
-  canvas.width = Math.round(innerWidth * dpr);
-  canvas.height = Math.round(innerHeight * dpr);
+  canvas.width = Math.round(options.width * dpr);
+  canvas.height = Math.round(options.height * dpr);
   const ctx = canvas.getContext('2d')!;
   ctx.scale(dpr, dpr);
-  ctx.fillStyle = '#f0f0f1';
-  ctx.fillRect(0, 0, innerWidth, innerHeight);
-  // Sivua on voitu hieman suurentaa animaatiolla. Fonttikoko skaalataan samassa suhteessa.
-  const zoom = page.getBoundingClientRect().width / page.offsetWidth || 1;
-
-  const visible = (el: Element) => getComputedStyle(el).visibility !== 'hidden' && !el.closest('.tnt');
-  for (const box of page.querySelectorAll<HTMLElement>('.intro-bar, .intro-notices .intro-notice')) {
-    if (!visible(box)) continue;
-    const r = box.getBoundingClientRect();
-    const style = getComputedStyle(box);
-    ctx.fillStyle = style.backgroundColor;
-    ctx.fillRect(r.left, r.top, r.width, r.height);
-    const border = parseFloat(style.borderLeftWidth);
-    if (border > 0) {
-      ctx.fillStyle = style.borderLeftColor;
-      ctx.fillRect(r.left, r.top, border * zoom, r.height);
-    }
+  if (options.background) {
+    ctx.fillStyle = options.background;
+    ctx.fillRect(0, 0, options.width, options.height);
   }
-
-  const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
+  // Näkymää on voitu hieman suurentaa animaatiolla. Fonttikoko ja reunat skaalataan samassa suhteessa.
+  const zoom = root.getBoundingClientRect().width / root.offsetWidth || 1;
   const range = document.createRange();
+  const clear = (color: string) => color === 'transparent' || /,\s*0\)$/.test(color);
   ctx.textBaseline = 'middle';
-  while (walker.nextNode()) {
-    const node = walker.currentNode as Text;
-    const parent = node.parentElement;
-    if (!parent || !node.data.trim() || !visible(parent)) continue;
-    const style = getComputedStyle(parent);
-    ctx.font = `${style.fontStyle} ${style.fontWeight} ${parseFloat(style.fontSize) * zoom}px ${style.fontFamily}`;
-    ctx.fillStyle = style.color;
-    for (const word of node.data.matchAll(/\S+/g)) {
-      range.setStart(node, word.index);
-      range.setEnd(node, word.index + word[0].length);
-      const r = range.getBoundingClientRect();
-      ctx.fillText(word[0], r.left, r.top + r.height / 2);
+
+  const paint = (el: Element) => {
+    if (options.skip && el.matches(options.skip)) return;
+    const style = getComputedStyle(el);
+    if (style.display === 'none') return;
+    const shown = options.includeHidden || style.visibility !== 'hidden';
+
+    if (shown) {
+      const r = el.getBoundingClientRect();
+      const x = r.left - options.originX;
+      const y = r.top - options.originY;
+      if (r.width > 0 && r.height > 0) {
+        const radius = parseFloat(style.borderTopLeftRadius) * zoom || 0;
+        const shape = () => {
+          ctx.beginPath();
+          if (radius > 0 && 'roundRect' in ctx) ctx.roundRect(x, y, r.width, r.height, Math.min(radius, r.height / 2));
+          else ctx.rect(x, y, r.width, r.height);
+        };
+        if (!clear(style.backgroundColor)) {
+          ctx.fillStyle = style.backgroundColor;
+          shape();
+          ctx.fill();
+        }
+        const top = parseFloat(style.borderTopWidth);
+        const left = parseFloat(style.borderLeftWidth);
+        if (top > 0 && style.borderTopStyle !== 'none' && !clear(style.borderTopColor)) {
+          ctx.strokeStyle = style.borderTopColor;
+          ctx.lineWidth = top * zoom;
+          shape();
+          ctx.stroke();
+        } else if (left > 0 && !clear(style.borderLeftColor)) {
+          ctx.fillStyle = style.borderLeftColor;
+          ctx.fillRect(x, y, left * zoom, r.height);
+        }
+      }
     }
-  }
+
+    for (const child of el.childNodes) {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        paint(child as Element);
+      } else if (shown && child.nodeType === Node.TEXT_NODE && (child as Text).data.trim()) {
+        const text = child as Text;
+        ctx.font = `${style.fontStyle} ${style.fontWeight} ${parseFloat(style.fontSize) * zoom}px ${style.fontFamily}`;
+        // Merkkiväli siirretään mukaan, jos selain tukee sitä canvasissa. Muuten sanat ovat silti oikeilla paikoillaan.
+        if ('letterSpacing' in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = style.letterSpacing === 'normal' ? '0px' : `${parseFloat(style.letterSpacing) * zoom}px`;
+        ctx.fillStyle = style.color;
+        for (const word of text.data.matchAll(/\S+/g)) {
+          range.setStart(text, word.index);
+          range.setEnd(text, word.index + word[0].length);
+          const r = range.getBoundingClientRect();
+          ctx.fillText(word[0], r.left - options.originX, r.top - options.originY + r.height / 2);
+        }
+      }
+    }
+  };
+  paint(root);
   return canvas;
+}
+
+/** Kuva intron feikki-WordPressistä koko ikkunan kokoisena. */
+export function snapshotPage(page: HTMLElement): HTMLCanvasElement {
+  return paintDom(page, { width: innerWidth, height: innerHeight, originX: 0, originY: 0, background: '#f0f0f1', skip: '.tnt' });
 }

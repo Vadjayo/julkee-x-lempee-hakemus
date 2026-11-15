@@ -245,7 +245,7 @@ export function intro(): void {
     $('#intro-vignette').animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, easing: 'ease-out', fill });
     page.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.035)' }], { duration: CINE + DROP + FUSE, easing: 'linear', fill });
     const lock = $('#intro-lock');
-    const targets = [$('.intro-notices'), $('.intro-title'), $('.intro-sub')];
+    const targets = [$('.intro-notices'), $('.intro-title'), $('.wp-cookie')];
     targets.forEach((target, i) => {
       later(() => {
         const r = target.getBoundingClientRect();
@@ -379,7 +379,7 @@ export function intro(): void {
       overlay.animate([...shake, { transform: 'none' }], { duration: 620 });
 
       // Otsikko lentää kirjaimittain, palkki ja ilmoitukset kokonaisina kappaleina.
-      const pieces: HTMLElement[] = [$('.intro-bar'), ...$$('.intro-notices .intro-notice')];
+      const pieces: HTMLElement[] = [$('.intro-bar'), ...$$('.intro-notices .intro-notice'), ...$$('#intro-page [data-piece]')];
       for (const line of [$('.intro-title'), $('.intro-sub')]) {
         const text = line.textContent ?? '';
         line.textContent = '';

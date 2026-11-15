@@ -14,9 +14,28 @@
       <p class="intro-notice late">Lisäosa pyytää viiden tähden arvostelua. Jälleen</p>
       <p class="intro-notice late">PHP-versiosi tuki on päättynyt</p>
     </div>
+    <div class="wp-head" data-piece>
+      <b>Logo tähän</b>
+      <span class="wp-nav"><span>Etusivu</span><span>Meistä</span><span>Palvelut</span><span>Blogi</span><span>Yhteystiedot</span></span>
+    </div>
     <div class="intro-old">
       <p class="intro-title">Sampon hakemus</p>
       <p class="intro-sub">Just another WordPress site</p>
+      <span class="wp-btn" data-piece>Lue lisää</span>
+    </div>
+    <div class="wp-posts">
+      {['Hello world!', 'Esimerkkisivu', 'Tietosuojaseloste'].map((title) => (
+        <div class="wp-post" data-piece>
+          <i class="wp-img"></i>
+          <b>{title}</b>
+          <i class="wp-line"></i>
+          <i class="wp-line short"></i>
+        </div>
+      ))}
+    </div>
+    <div class="wp-cookie" data-piece>
+      <span>Käytämme evästeitä parantaaksemme käyttökokemustasi</span>
+      <b>Hyväksy kaikki</b>
     </div>
     <div class="tnt" id="intro-tnt">
       <i class="fuse" id="intro-fuse"></i>
@@ -65,7 +84,24 @@
   /* Myöhemmät ilmoitukset ovat piilossa, kunnes skripti pudottaa ne paikalleen. */
   .intro-notice.late, .straggler { visibility: hidden; }
   .straggler { position: absolute; left: 50%; top: 32%; width: min(320px, 80vw); margin-left: calc(min(320px, 80vw) / -2); }
-  .intro-old { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px 24px 200px; }
+  .wp-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 12px 24px; background: #fff; border-bottom: 1px solid #dcdcde; font: 14px var(--sans); }
+  .wp-head b { color: #787c82; font-weight: 600; white-space: nowrap; }
+  .wp-nav { display: flex; gap: 18px; overflow: hidden; white-space: nowrap; color: #2271b1; }
+  .intro-old { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 12px 24px; }
+  .wp-btn { margin-top: 16px; padding: 9px 20px; border-radius: 3px; background: #2271b1; color: #fff; font: 14px var(--sans); }
+  .wp-posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 24px 128px; }
+  .wp-post { display: grid; gap: 8px; padding: 10px; background: #fff; border: 1px solid #dcdcde; font: 600 15px var(--sans); }
+  .wp-img { height: 52px; background: #c3c4c7; }
+  .wp-line { height: 6px; background: #dcdcde; }
+  .wp-line.short { width: 60%; }
+  .wp-cookie { position: absolute; left: 0; right: 0; bottom: 64px; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 10px 16px; background: #1d2327; color: #f0f0f1; font: 13px var(--sans); }
+  .wp-cookie b { flex: none; padding: 5px 12px; border-radius: 3px; background: #2271b1; color: #fff; font-weight: 600; }
+  @media (max-width: 700px) {
+    .wp-posts { grid-template-columns: 1fr; padding-bottom: 150px; }
+    .wp-post:nth-child(n + 2) { display: none; }
+    .wp-nav span:nth-child(n + 4) { display: none; }
+    .wp-cookie { font-size: 12px; }
+  }
   .intro-title { font-size: clamp(34px, 6vw, 64px); line-height: 1.1; }
   .intro-sub { font-size: 18px; color: #50575e; margin-top: 10px; }
   /* Lentävät kirjaimet ja lähtölaskenta piirretään pseudoelementteinä: ne ovat pelkkää koristetta. */
@@ -73,7 +109,7 @@
   .intro :global(.ch)::before, .count::before { content: attr(data-t); }
 
   /* Dynamiittinippu: kolme pötköä, vanne ja sytytyslanka. */
-  .tnt { position: absolute; left: 50%; bottom: 96px; width: 84px; margin-left: -42px; opacity: 0; }
+  .tnt { position: absolute; left: 50%; bottom: 108px; width: 84px; margin-left: -42px; opacity: 0; }
   .sticks { position: relative; display: flex; gap: 3px; justify-content: center; }
   .sticks i { width: 24px; height: 84px; border-radius: 5px; background: #d63638; box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.18), inset 0 6px 0 rgba(255, 255, 255, 0.25); }
   .band { position: absolute; left: 0; right: 0; top: 34px; height: 14px; background: #1d2327; border-radius: 2px; }
