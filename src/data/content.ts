@@ -225,5 +225,5 @@ export const MATCH = [
 export const PRACTICAL = [
   'Asun Oulussa. Muutto Helsinkiin onnistuu, ja pari toimistopäivää viikossa sopii.',
   'Valmistun ohjelmistokehittäjäksi maaliskuussa 2027.',
-  'Tausta: B2C-puhelinmyynti ja rakennusala ennen alanvaihtoa.',
+  'Tausta: myyntiala ja rakennusala ennen alanvaihtoa.',
 ];
