@@ -188,6 +188,12 @@ export function intro(): void {
   let complete = false;
   const timers: number[] = [];
   const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
+  // Vaiheet kirjataan juurielementtiin. Testit lukevat ne lopuksi sen sijaan, että kyttäisivät lyhyitä hetkiä.
+  const stages: string[] = [];
+  const stage = (name: string) => {
+    stages.push(name);
+    root.dataset.introStages = stages.join(' ');
+  };
 
   const finish = (skipped: boolean) => {
     if (done) return;
@@ -206,6 +212,7 @@ export function intro(): void {
       root.classList.add('intro-done');
       root.dataset.introMs = String(Math.round(performance.now()));
     }, 400);
+    stage(skipped ? 'ohitettu' : 'valmis');
     if (skipped) return;
     // Lopputila asetetaan myös tässä, jotta se ei jää hitaalla laitteella ajastimien varaan.
     complete = true;
@@ -232,6 +239,7 @@ export function intro(): void {
   // Ilmoituksia tulee lisää, kuten oikeassakin ohjausnäkymässä.
   $$('.intro-notice.late').forEach((notice, i) => {
     later(() => {
+      if (i === 0) stage('ilmoitukset');
       notice.style.visibility = 'visible';
       notice.animate([{ transform: 'translateY(-14px) scaleY(0.4)' }, { transform: 'none' }], { duration: 260, easing: OUT });
     }, 350 + i * 380);
@@ -239,6 +247,7 @@ export function intro(): void {
 
   // Elokuvarajaus laskeutuu, kuva tummenee reunoilta ja kohdelukko käy kohteet läpi.
   later(() => {
+    stage('rajaus');
     // Varjostimet käännetään jo nyt, jotta räjähdyshetkellä ei tule viivettä.
     shatter = createShatter($<HTMLCanvasElement>('#intro-gl') as HTMLCanvasElement);
     $('#intro-letterbox').animate([{ transform: 'translateY(-100%)' }, { transform: 'none' }], { duration: 420, easing: OUT, fill });
@@ -267,6 +276,7 @@ export function intro(): void {
   }, HOLD);
 
   later(() => {
+    stage('dynamiitti');
     tnt.animate(
       [
         { opacity: 1, transform: 'translateY(-110vh) rotate(-30deg)' },
@@ -282,6 +292,7 @@ export function intro(): void {
     // Lähtölaskenta: jokainen numero iskeytyy ruutuun ja kuva nytkähtää.
     [3, 2, 1].forEach((n, i) => {
       later(() => {
+        stage(`laskenta-${n}`);
         count.dataset.t = String(n);
         count.animate(
           [
@@ -358,6 +369,7 @@ export function intro(): void {
       };
       requestAnimationFrame(tick);
 
+      stage(shatter && snapshot ? 'rajahdys-webgl' : 'rajahdys-canvas');
       if (shatter && snapshot) {
         // DOM-sivu vaihtuu kuvaan, jonka näytönohjain räjäyttää. Alta paljastuu musta, kuten oikea sivu.
         page.style.display = 'none';
@@ -417,6 +429,7 @@ export function intro(): void {
 
   later(() => {
     // Raunioille ilmestyy vielä yksi ilmoitus. Sekin lähtee.
+    stage('viimeinen-ilmoitus');
     const straggler = $('#intro-straggler');
     straggler.style.visibility = 'visible';
     straggler.animate(
