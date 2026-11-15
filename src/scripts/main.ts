@@ -3,6 +3,7 @@
  * Sisältö näkyy ilman tätä skriptiä. Skripti lisää vain liikkeen ja mittaukset.
  */
 import { intro } from './intro.ts';
+import { ASSEMBLE_SECONDS, createAssembler, type Assembler } from './builder-gl.ts';
 
 const $ = <T extends HTMLElement>(selector: string) => document.querySelector<T>(selector)!;
 const $$ = <T extends HTMLElement>(selector: string) => [...document.querySelectorAll<T>(selector)];
@@ -134,6 +135,7 @@ function pipeline(): void {
 function builder(): void {
   const stage = $('#stage');
   const slots = $$('#stage .slot');
+  const blocks = slots.map((slot) => slot.firstElementChild as HTMLElement);
   const hit = $<HTMLButtonElement>('#build-btn');
   const auto = $<HTMLButtonElement>('#build-auto');
   const pct = $('#build-pct');
@@ -141,11 +143,31 @@ function builder(): void {
   const msg = $('#build-msg');
   const wp = $('#build-wp');
   const TOTAL_PLUGINS = 47;
-  let placed = 0;
+  let placed = 0;      // montako palaa on lyöty
+  let landed = 0;      // montako on jo paikallaan
   let startedAt = 0;
   let ticker = 0;
   let autoTimer = 0;
   let plugin = 0;
+  let busy = false;    // purku käynnissä
+  let assembler: Assembler | null = null;
+
+  /** Näytönohjainefektit luodaan vasta ensimmäisellä lyönnillä ja uudelleen, jos lavan koko on muuttunut. */
+  const effects = (): Assembler | null => {
+    if (reduce) return null;
+    const rect = stage.getBoundingClientRect();
+    if (assembler && (Math.abs(assembler.width - rect.width) > 1 || Math.abs(assembler.height - rect.height) > 1)) {
+      if (placed > 0) return null; // kesken rakennuksen muuttunut lava: loput palat varatoteutuksella
+      assembler.dispose();
+      assembler = null;
+      // Menetetty konteksti ei palaudu samalle canvasille, joten tilalle vaihdetaan uusi.
+      const old = $('#stage-fx');
+      const fresh = old.cloneNode() as HTMLCanvasElement;
+      old.replaceWith(fresh);
+    }
+    assembler ??= createAssembler($<HTMLCanvasElement>('#stage-fx') as HTMLCanvasElement, stage, blocks);
+    return assembler;
+  };
 
   const elapsed = () => (startedAt ? (performance.now() - startedAt) / 1000 : 0);
   const mark = () => {
@@ -181,48 +203,89 @@ function builder(): void {
     auto.disabled = false;
   };
 
-  const place = () => {
-    if (placed >= slots.length) return;
-    if (placed === 0) start();
-    const slot = slots[placed]!;
-    const block = slot.firstElementChild as HTMLElement;
-    slot.classList.add('placed');
-    if (!reduce) {
-      const tilt = (Math.random() - 0.5) * 16;
-      block.animate(
-        [
-          { opacity: 0, transform: `translateY(-140px) rotate(${tilt}deg) scale(1.08)` },
-          { opacity: 1, transform: 'translateY(8px) rotate(0) scale(1)', offset: 0.7 },
-          { opacity: 1, transform: 'translateY(-3px)', offset: 0.85 },
-          { opacity: 1, transform: 'none' },
-        ],
-        { duration: 420, easing: 'cubic-bezier(.3,.7,.3,1)' },
-      );
-      // Pieni tärähdys koko lavalle, kun pala osuu paikalleen.
-      stage.animate([{ transform: 'none' }, { transform: 'translateY(3px)' }, { transform: 'none' }], { duration: 160, delay: 280 });
-    }
-    placed++;
-    mark();
-    if (placed === slots.length) finish();
-    else if (!auto.disabled) msg.textContent = `${placed}/${slots.length} palaa paikallaan`;
+  /** Pala on paikallaan: DOM-versio näkyviin, lava tärähtää ja viimeisen jälkeen työ on valmis. */
+  const land = (index: number, sparks: boolean) => {
+    slots[index]!.classList.add('placed');
+    if (sparks) assembler?.land(index);
+    if (!reduce) stage.animate([{ transform: 'none' }, { transform: 'translateY(3px)' }, { transform: 'none' }], { duration: 160 });
+    landed++;
+    if (landed === slots.length) finish();
   };
 
-  const reset = () => {
-    clearInterval(ticker);
-    clearInterval(autoTimer);
+  const place = () => {
+    if (busy || placed >= slots.length) return;
+    if (placed === 0) start();
+    const index = placed;
+    placed++;
+    mark();
+    if (placed < slots.length && !auto.disabled) msg.textContent = `${placed}/${slots.length} palaa paikallaan`;
+
+    const fx = effects();
+    if (fx) {
+      // Sirpaleet lentävät paikalleen, ja valmis pala vaihtuu oikeaksi elementiksi.
+      fx.assemble(index);
+      setTimeout(() => land(index, true), ASSEMBLE_SECONDS * 1000);
+      return;
+    }
+    // Varatoteutus: pala putoaa ylhäältä. Liikkeen rajoituksella se vain ilmestyy.
+    const block = blocks[index]!;
+    if (reduce) {
+      land(index, false);
+      return;
+    }
+    slots[index]!.classList.add('placed');
+    const tilt = (Math.random() - 0.5) * 16;
+    block.animate(
+      [
+        { opacity: 0, transform: `translateY(-140px) rotate(${tilt}deg) scale(1.08)` },
+        { opacity: 1, transform: 'translateY(8px) rotate(0) scale(1)', offset: 0.7 },
+        { opacity: 1, transform: 'translateY(-3px)', offset: 0.85 },
+        { opacity: 1, transform: 'none' },
+      ],
+      { duration: 420, easing: 'cubic-bezier(.3,.7,.3,1)' },
+    );
+    setTimeout(() => land(index, false), 300);
+  };
+
+  const clear = () => {
     placed = 0;
+    landed = 0;
     startedAt = 0;
+    busy = false;
     slots.forEach((slot) => slot.classList.remove('placed'));
     stage.classList.remove('done');
     clock.textContent = '0,0 s';
     msg.textContent = 'Lyö ensimmäinen pala paikalleen.';
     wp.textContent = '';
     hit.textContent = 'Lyö pala paikalleen';
+    hit.disabled = false;
     auto.hidden = false;
     mark();
   };
 
-  hit.addEventListener('click', () => (placed >= slots.length ? reset() : place()));
+  const demolish = () => {
+    clearInterval(ticker);
+    clearInterval(autoTimer);
+    const fx = effects();
+    if (!fx) {
+      clear();
+      return;
+    }
+    // Valmis sivu räjähtää sirpaleiksi samalla tavalla kuin intron WordPress.
+    busy = true;
+    hit.disabled = true;
+    msg.textContent = 'Puretaan';
+    slots.forEach((slot) => slot.classList.remove('placed'));
+    stage.classList.remove('done');
+    fx.explode();
+    stage.animate(
+      [0, -7, 6, -4, 3, 0].map((x, i) => ({ transform: `translate(${x}px, ${i % 2 ? 4 : -3}px)` })),
+      { duration: 380 },
+    );
+    setTimeout(clear, 1300);
+  };
+
+  hit.addEventListener('click', () => (placed >= slots.length ? demolish() : place()));
   // Lavaa voi myös napauttaa suoraan. Valmiin sivun linkki toimii normaalisti.
   stage.addEventListener('click', (event) => {
     if (placed >= slots.length) return;
@@ -230,11 +293,11 @@ function builder(): void {
     place();
   });
   auto.addEventListener('click', () => {
-    if (placed >= slots.length) return;
+    if (busy || placed >= slots.length) return;
     auto.disabled = true;
     msg.textContent = 'Rakennetaan';
     place();
-    autoTimer = window.setInterval(place, reduce ? 0 : 300);
+    autoTimer = window.setInterval(place, reduce ? 0 : 260);
   });
   mark();
 }

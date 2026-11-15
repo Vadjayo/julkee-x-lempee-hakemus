@@ -21,6 +21,7 @@ const benefits = ['Verkkosivut', 'Hakukoneet', 'Automaatiot'];
         <div class="slot h"><div class="blk">Tilalle tuli Sampo</div></div>
         {benefits.map((text) => <div class="slot c"><div class="blk">{text}</div></div>)}
         <div class="slot cta"><a class="blk" href="#yhteys">Ota yhteyttä</a></div>
+        <canvas class="stage-fx" id="stage-fx" aria-hidden="true"></canvas>
       </div>
       <div class="b-foot">
         <button class="btn" id="build-btn" type="button">Lyö pala paikalleen</button>
@@ -39,8 +40,17 @@ const benefits = ['Verkkosivut', 'Hakukoneet', 'Automaatiot'];
   .builder { margin-top: 48px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); overflow: hidden; }
   .b-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 13px; font-variant-numeric: tabular-nums; }
   #build-time { color: var(--red); }
-  .stage { padding: clamp(16px, 4vw, 28px); display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); cursor: pointer; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+  .stage { position: relative; padding: clamp(16px, 4vw, 28px); display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); cursor: pointer; overflow: hidden; -webkit-tap-highlight-color: transparent; }
   .stage.done { cursor: default; }
+  /* Sirpaleet ja kipinät piirretään lavan päälle. Klikkaukset menevät läpi. */
+  .stage-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  /* Valmiin sivun yli pyyhkäisee valo. */
+  .stage::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.14), transparent); transform: translateX(-120%); pointer-events: none; }
+  .stage.done::after { animation: sweep 1.1s 0.15s var(--ease) both; }
+  @keyframes sweep { from { transform: translateX(-120%); } to { transform: translateX(380%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .stage.done::after { animation: none; }
+  }
   .slot { border-radius: 10px; outline: 1px dashed #333; outline-offset: -1px; display: grid; }
   .slot.next { outline: 2px dashed var(--red); outline-offset: -2px; }
   .slot.placed { outline: none; }
