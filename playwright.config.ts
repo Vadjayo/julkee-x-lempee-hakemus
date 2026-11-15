@@ -6,6 +6,8 @@ const baseURL = process.env.BASE_URL ?? 'http://localhost:4321';
 export default defineConfig({
   testDir: 'tests',
   fullyParallel: true,
+  // Testiselain piirtää WebGL-intron ohjelmallisesti. Liian moni rinnakkainen intro venyttää ajoituksia.
+  workers: 2,
   reporter: [['list']],
   use: { baseURL, locale: 'fi-FI' },
   // Oletuksena Chromium. Kaikki selaimet: npm run test:browsers

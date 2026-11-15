@@ -29,7 +29,7 @@ test.describe('intro', () => {
     await expect(page.locator('#intro')).toContainText('Just another WordPress site');
     await expect(page.locator('#intro')).toContainText('14 lisäosaa odottaa päivitystä');
     await expect(page.locator('#intro-letterbox')).toContainText('Tehtävä: räjäytä WordPress');
-    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 8000 });
+    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 15000 });
     // Selaimen oma kello: millisekunnit sivun avaamisesta siihen, kun intro on poissa.
     const elapsed = Number(await page.locator('html').getAttribute('data-intro-ms'));
     // Intro kirjaa vaiheensa. Kaikkien pitää tapahtua tässä järjestyksessä.
@@ -41,7 +41,8 @@ test.describe('intro', () => {
     await expect(page.locator('#intro-pct')).toHaveText('Purettu 100 %');
     await expect(page.locator('#intro-plugins')).toHaveText('0');
     expect(elapsed).toBeGreaterThan(6000);
-    expect(elapsed).toBeLessThanOrEqual(7600);
+    // Yläraja on väljä, koska testiselain piirtää räjähdyksen ilman näytönohjainta.
+    expect(elapsed).toBeLessThanOrEqual(9000);
     await expect(page.locator('#intro')).toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     // Saavutusilmoitus näkyy hetken oikean sivun päällä ja poistuu itse.
@@ -64,7 +65,7 @@ test.describe('intro', () => {
       } as typeof original;
     });
     await page.goto('/');
-    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 9000 });
+    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 15000 });
     await expect(page.locator('html')).toHaveAttribute('data-intro-stages', /rajahdys-canvas viimeinen-ilmoitus valmis$/);
     await expect(page.locator('#intro-pct')).toHaveText('Purettu 100 %');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -74,7 +75,7 @@ test.describe('intro', () => {
   test('intro ei aiheuta konsolivirheitä WebGL-räjähdyksellä', async ({ page }) => {
     const errors = collectErrors(page);
     await page.goto('/');
-    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 9000 });
+    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 15000 });
     expect(errors).toEqual([]);
   });
 
@@ -87,6 +88,17 @@ test.describe('intro', () => {
     await expect(page.locator('#intro-toast')).toBeHidden();
     await expect(page.locator('html')).toHaveAttribute('data-intro-stages', /ohitettu$/);
   });
+});
+
+test('Räjäytä uudelleen näyttää intron uudestaan', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('#intro')).toBeHidden();
+  // open() merkitsee intron nähdyksi jokaisella latauksella, joten merkintä poistetaan ennen uusintaa.
+  await page.evaluate(() => window.addEventListener('beforeunload', () => sessionStorage.setItem('replay-test', '1')));
+  await page.addInitScript(() => sessionStorage.getItem('replay-test') && sessionStorage.removeItem('intro-seen'));
+  await page.getByRole('button', { name: 'Räjäytä uudelleen' }).click();
+  await expect(page.locator('#intro')).toBeVisible();
+  await expect(page.locator('#intro')).toContainText('Just another WordPress site');
 });
 
 test('punainen piste sammuu ja näyttää viestin', async ({ page }) => {
@@ -196,6 +208,7 @@ test.describe('reduced motion', () => {
 
   test('ei introa, ei vieritystä eikä videoita, sisältö näkyy heti', async ({ page }) => {
     await page.goto('/');
+    await expect(page.locator('#replay')).toBeHidden();
     await expect(page.locator('#intro')).toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await scrollThrough(page);

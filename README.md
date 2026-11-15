@@ -7,7 +7,7 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 ## Mitä tehtiin
 
 - Yksi staattinen sivu Astrolla ja TypeScriptillä. Ei UI-kehystä eikä animaatiokirjastoa: liike on CSS:ää, Web Animations APIa, IntersectionObserveria ja intron osalta WebGL2:ta.
-- Intro on pelimäinen välianimaatio: oikean WordPress-laskeutumissivun näköinen näkymä (valikko, hero, artikkelikortit, evästebanneri) lukitaan kohteeksi ja räjäytetään dynamiitilla. Sivu sirpaloituu ja tuli, kipinät ja savu piirretään WebGL2-varjostimilla ilman kirjastoja (`src/scripts/intro-gl.ts`). Jos WebGL2 puuttuu, käytössä on Canvas 2D -varatoteutus. Näkyy kerran istunnossa, ja sen voi ohittaa.
+- Intro on pelimäinen välianimaatio: oikean WordPress-laskeutumissivun näköinen näkymä (valikko, hero, artikkelikortit, evästebanneri) lukitaan kohteeksi ja räjäytetään dynamiitilla. Sivu sirpaloituu ja tuli, kipinät ja savu piirretään WebGL2-varjostimilla ilman kirjastoja (`src/scripts/intro-gl.ts`). Jos WebGL2 puuttuu, käytössä on Canvas 2D -varatoteutus. Näkyy kerran istunnossa, sen voi ohittaa ja heron napista "Räjäytä uudelleen" sen saa näkyviin uudestaan.
 - Työt-osio (neljä asiakassivustoa, oma SaaS, agentti ja demo), jonka esikatselut on kaapattu oikeilta sivuilta: selainkehys ja puhelinkehys vierivät samassa tahdissa, ja Reskontratutkasta on ruutunauhoitus oikeasta hausta.
 - Ilonan kortissa on havainnekuva, koska tuotteella ei ole julkista käyttöliittymää. Työnhakuagentin kortissa on ote aidosta Telegram-viestistä.
 - Rakennustyökalu on intron vastakohta samalla tekniikalla: kävijä lyö palat paikalleen, ja jokainen pala kootaan sisään lentävistä sirpaleista (`src/scripts/builder-gl.ts`). Purku räjäyttää valmiin sivun. Valmiin sivun nappi on oikea linkki yhteystietoihin.
@@ -77,11 +77,11 @@ npm run og                                           # päivittää linkin esika
 
 | Tarkistus | Tulos |
 |---|---|
-| Playwright, paikallinen build, Chromium, Firefox ja WebKit | 60/60 läpi |
-| Playwright, tuotanto-osoite, Chromium | 20/20 läpi |
+| Playwright, paikallinen build, Chromium, Firefox ja WebKit | 63/63 läpi |
+| Playwright, tuotanto-osoite, Chromium | 21/21 läpi |
 | Leveydet 375, 768 ja 1440 px | Ei vaakavieritystä, ei päällekkäisiä elementtejä, ei konsolivirheitä. Kuvakaappaukset katsottu läpi. |
 | Lighthouse, mobiili, tuotanto, kolme ajoa | Suorituskyky 100, saavutettavuus 100, parhaat käytännöt 100 |
-| Lighthouse, hakukoneet | 69. Ainoa pisteitä vievä tarkistus on `is-crawlable`, eli tarkoituksellinen `noindex`. |
+| Lighthouse, hakukoneet | 69. Ainoa pisteitä vievä tarkistus on `is-crawlable`, eli tarkoituksellinen `noindex`. Lukua ei näytetä sivulla. |
 | Ensimmäinen lataus ilman videoita | Raja 300 kt. Tuotannosta mitattuna puhelinemulaatiolla (390 px, tiheys 3) 227 kt ja työpöydällä (1440 px) 200 kt. Luvuissa ovat mukana laiskasti ladattavat esikatselukuvat, jotka selain hakee ennakkoon. |
 | Ajatusviivat ja otsikoiden välimerkit | Ei löytynyt |
 | Ulkoiset linkit | 7/8 vastasi 200. LinkedIn vastasi 999, ks. alla. |
