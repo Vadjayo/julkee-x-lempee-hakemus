@@ -1,0 +1,70 @@
+---
+/**
+ * Havainnekuva Ilonan toiminnasta. Ilonalla ei ole julkista käyttöliittymää,
+ * eikä kuvassa ole keksittyä keskustelua: puhekuplissa on vain vaiheen nimi.
+ */
+const bars = Array.from({ length: 18 }, (_, i) => i);
+---
+<figure class="mock" data-play="loop">
+  <span class="badge">Havainnekuva</span>
+  <ol class="call">
+    <li class="step s1">
+      <span class="who">Soittaja</span>
+      <span class="bubble"><span class="what">Kysyy yritykseltä jotain</span><i class="sk w80"></i><i class="sk w55"></i></span>
+    </li>
+    <li class="step s2" aria-label="Ilona kuuntelee ja hakee vastauksen">
+      <span class="wave" aria-hidden="true">{bars.map((i) => <i style={`--i:${i}`}></i>)}</span>
+    </li>
+    <li class="step s3">
+      <span class="who">Ilona</span>
+      <span class="bubble"><span class="what">Vastaa yrityksen omilla tiedoilla</span><i class="sk w90"></i><i class="sk w70"></i><i class="sk w40"></i></span>
+    </li>
+    <li class="step s4">
+      <span class="sms">
+        <span class="sms-head">Tekstiviesti omistajalle</span>
+        <span class="what">Yhteenveto puhelusta ja liidin tiedot</span>
+        <i class="sk w90"></i><i class="sk w75"></i><i class="sk w50"></i>
+      </span>
+    </li>
+  </ol>
+  <figcaption class="visually-hidden">
+    Havainnekuva: soittaja kysyy, Ilona vastaa yrityksen omilla tiedoilla ja omistaja saa puhelusta yhteenvedon tekstiviestinä.
+  </figcaption>
+</figure>
+
+<style>
+  .mock { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #111; padding: 44px 16px 16px; overflow: hidden; }
+  .badge { position: absolute; top: 12px; left: 12px; font: 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #000; background: var(--fg); border-radius: 999px; padding: 3px 10px; }
+  .call { display: grid; gap: 10px; }
+  .step { display: grid; gap: 4px; max-width: 78%; }
+  .s2 { max-width: none; justify-items: center; padding: 2px 0; }
+  .s3 { justify-self: end; justify-items: end; }
+  .s4 { justify-self: center; max-width: 92%; width: 100%; margin-top: 4px; }
+  .who { font: 11px var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .bubble, .sms { display: grid; gap: 6px; padding: 10px 12px; border-radius: 14px; background: #1c1c1c; border: 1px solid #2c2c2c; font-size: 13px; }
+  .s3 .bubble { background: var(--fg); color: #000; border-color: var(--fg); }
+  .s3 .sk { background: rgba(0, 0, 0, 0.25); }
+  .sms { border-color: var(--red); background: #0a0a0a; border-radius: 12px; }
+  .sms-head { font: 11px var(--mono); color: var(--red); text-transform: uppercase; letter-spacing: 0.08em; }
+  .what { font-weight: 600; line-height: 1.3; }
+  .sk { display: block; height: 6px; border-radius: 3px; background: #3a3a3a; }
+  .w90 { width: 90%; } .w80 { width: 80%; } .w75 { width: 75%; } .w70 { width: 70%; } .w55 { width: 55%; } .w50 { width: 50%; } .w40 { width: 40%; }
+  .wave { display: flex; align-items: center; gap: 3px; height: 26px; }
+  .wave i { width: 3px; height: 100%; border-radius: 2px; background: var(--red); transform: scaleY(0.25); }
+
+  /* Vaiheet ilmestyvät vuorotellen, kun kortti on näkyvissä. Muulloin kaikki näkyy paikallaan. */
+  :global(.js) .mock.playing .step { animation: step 10s linear infinite both; }
+  :global(.js) .mock.playing .s1 { --from: 2%; animation-name: step1; }
+  :global(.js) .mock.playing .s2 { animation-name: step2; }
+  :global(.js) .mock.playing .s3 { animation-name: step3; }
+  :global(.js) .mock.playing .s4 { animation-name: step4; }
+  :global(.js) .mock.playing .wave i { animation: wave 0.9s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -0.13s); }
+  @keyframes step1 { 0%, 2% { opacity: 0; transform: translateY(10px); } 8%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+  @keyframes step2 { 0%, 16% { opacity: 0; transform: translateY(10px); } 22%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+  @keyframes step3 { 0%, 34% { opacity: 0; transform: translateY(10px); } 40%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+  @keyframes step4 { 0%, 56% { opacity: 0; transform: translateY(10px); } 62%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+  @keyframes wave { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .mock.playing .step, :global(.js) .mock.playing .wave i { animation: none; }
+  }
+</style>

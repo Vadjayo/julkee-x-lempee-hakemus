@@ -1,0 +1,109 @@
+---
+import { PROJECTS, SMALL_WORKS, JOB_AGENT_MESSAGE } from '../data/content';
+import SitePreview from './SitePreview.astro';
+import IlonaMock from './IlonaMock.astro';
+import TelegramMock from './TelegramMock.astro';
+---
+<section class="section" id="tyot" aria-labelledby="tyot-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>02</b> / Työt</p>
+    <h2 id="tyot-title" class="rv">Nämä ovat jo tuotannossa</h2>
+    <p class="lead rv">Esikatselut on kuvattu oikeilta sivuilta. Klikkaa, niin pääset perille.</p>
+
+    <ul class="grid">
+      {PROJECTS.map((p) => (
+        <li class="rv">
+          <article class="card" data-card id={`tyo-${p.slug}`}>
+            <div class="card-preview">
+              {p.preview.kind === 'site' && (
+                <SitePreview name={p.name} host={p.host!} desktop={p.preview.desktop} mobile={p.preview.mobile} video={p.preview.video} />
+              )}
+              {p.preview.kind === 'ilona' && <IlonaMock />}
+              {p.preview.kind === 'telegram' && (
+                <TelegramMock bot={p.name} lines={JOB_AGENT_MESSAGE} caption="Ote aidosta viestistä 20.10.2026" />
+              )}
+            </div>
+            <div class="card-body">
+              <p class="type">{p.type}</p>
+              <h3>
+                {p.url ? (
+                  <a class="card-link" href={p.url} target="_blank" rel="noopener">
+                    {p.name}<span class="arrow" aria-hidden="true">↗</span><span class="visually-hidden"> (avautuu uuteen välilehteen)</span>
+                  </a>
+                ) : (
+                  p.name
+                )}
+              </h3>
+              <p class="desc">{p.description}</p>
+              <dl class="facts">
+                <div><dt>Rooli</dt><dd>{p.role}</dd></div>
+                <div>
+                  <dt>Tekniikat</dt>
+                  <dd><ul class="tags">{p.tech.map((t) => <li>{t}</li>)}</ul></dd>
+                </div>
+              </dl>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="sub rv" id="agentit">Agentit, automaatiot ja oma työkalu</h3>
+    <ul class="small-grid">
+      {SMALL_WORKS.map((w) => (
+        <li class="rv">
+          <article class="small">
+            <p class="type">{w.type}</p>
+            <h4>
+              {'url' in w && w.url ? (
+                <a class="card-link" href={w.url} target="_blank" rel="noopener">
+                  {w.name}<span class="arrow" aria-hidden="true">↗</span><span class="visually-hidden"> (avautuu uuteen välilehteen)</span>
+                </a>
+              ) : (
+                w.name
+              )}
+            </h4>
+            <p class="desc">{w.description}</p>
+            <ul class="tags">{w.tech.map((t) => <li>{t}</li>)}</ul>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 56px; }
+  .grid > li, .small-grid > li { display: flex; min-width: 0; }
+  .card, .small {
+    position: relative; flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    border: 1px solid var(--line); border-radius: 20px;
+    background: var(--card);
+    transition: border-color 0.25s;
+  }
+  .card:has(.card-link):hover, .small:has(.card-link):hover { border-color: var(--fg); }
+  .card-preview { padding: 16px 16px 0; }
+  .card-body { padding: 20px 24px 24px; display: flex; flex-direction: column; flex: 1; }
+  .type { font: 12px var(--mono); color: var(--red); text-transform: uppercase; letter-spacing: 0.08em; }
+  .card h3, .small h4 { margin: 8px 0 10px; }
+  .card-link { text-decoration: none; }
+  .card-link::after { content: ''; position: absolute; inset: 0; border-radius: 20px; }
+  .arrow { display: inline-block; margin-left: 8px; font: 0.8em var(--mono); color: var(--dim); transition: transform 0.25s; }
+  .card:hover .arrow, .small:hover .arrow { transform: translate(3px, -3px); color: var(--fg); }
+  .desc { color: var(--dim); font-size: 15.5px; text-wrap: pretty; }
+  .facts { margin-top: auto; padding-top: 18px; display: grid; gap: 12px; }
+  .facts dt { font: 11px var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+  .facts dd { font-size: 14.5px; }
+  .sub { margin-top: 72px; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.02em; }
+  .small-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+  .small { padding: 22px 24px 24px; }
+  .small .tags { margin-top: auto; padding-top: 16px; }
+  @media (min-width: 900px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .small-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .arrow, .card, .small { transition: none; }
+  }
+</style>

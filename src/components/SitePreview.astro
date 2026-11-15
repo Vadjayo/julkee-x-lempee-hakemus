@@ -1,0 +1,76 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  name: string;
+  host: string;
+  desktop: ImageMetadata;
+  mobile: ImageMetadata;
+  /** Tiedostonimi kansiossa public/video ilman päätettä. */
+  video?: string;
+}
+const { name, host, desktop, mobile, video } = Astro.props;
+---
+<div class="preview" data-preview>
+  <div class="browser">
+    <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>{host}</span></div>
+    <div class="viewport" data-scroll={video ? undefined : ''}>
+      <Picture
+        src={desktop}
+        formats={['avif', 'webp']}
+        quality={36}
+        widths={[480, 720, 960]}
+        sizes="(min-width: 900px) 520px, 92vw"
+        alt={`Kuvakaappaus sivuston ${name} työpöytänäkymästä`}
+        loading="lazy"
+        decoding="async"
+      />
+      {video && (
+        <video muted loop playsinline preload="none" data-video aria-label={`Ruutunauhoitus: ${name} käytössä`}>
+          <source src={`/video/${video}.webm`} type="video/webm" />
+          <source src={`/video/${video}.mp4`} type="video/mp4" />
+        </video>
+      )}
+    </div>
+  </div>
+  <div class="phone">
+    <div class="viewport" data-scroll>
+      <Picture
+        src={mobile}
+        formats={['avif', 'webp']}
+        quality={36}
+        widths={[160, 240, 320]}
+        sizes="(min-width: 900px) 110px, 20vw"
+        alt={`Kuvakaappaus sivuston ${name} mobiilinäkymästä`}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+  .preview { position: relative; padding: 0 0 18px; }
+  .browser { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #111; }
+  .browser-bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  .browser-bar i { width: 8px; height: 8px; border-radius: 50%; background: #333; }
+  .browser-bar span { margin-left: 10px; font: 11px var(--mono); color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .viewport { position: relative; overflow: hidden; background: #111; }
+  .browser .viewport { aspect-ratio: 16 / 10; }
+  .viewport :global(img) { width: 100%; height: auto; }
+  .viewport video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity 0.4s; }
+  .viewport video.on { opacity: 1; }
+  .phone {
+    position: absolute; right: 14px; bottom: 0;
+    width: 21%; max-width: 120px;
+    border: 3px solid #1c1c1c; outline: 1px solid #3a3a3a;
+    border-radius: 14px; overflow: hidden;
+    background: #111;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+  }
+  .phone .viewport { aspect-ratio: 9 / 18; }
+  @media (prefers-reduced-motion: reduce) {
+    .viewport video { display: none; }
+  }
+</style>
