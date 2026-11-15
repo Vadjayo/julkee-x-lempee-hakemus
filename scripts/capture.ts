@@ -32,6 +32,7 @@ type Target = {
 
 const TARGETS: Target[] = [
   { slug: 'govuokatti', url: 'https://govuokatti.fi/' },
+  { slug: 'piecengo', url: 'https://piecengo.fi/' },
   { slug: 'pahkalaranch', url: 'https://pahkalaranch.fi/fi' },
   { slug: 'pekkapudas', url: 'https://www.pekkapudas.fi/' },
   { slug: 'reskontratutka', url: 'https://reskontratutka.vercel.app/', record: recordReskontratutka },

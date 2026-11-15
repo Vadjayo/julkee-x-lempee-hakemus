@@ -100,6 +100,13 @@ import TelegramMock from './TelegramMock.astro';
   .small .tags { margin-top: auto; padding-top: 16px; }
   @media (min-width: 900px) {
     .grid { grid-template-columns: 1fr 1fr; }
+    /* Ensimmäinen työ on kärkikortti: koko rivin levyinen, esikatselu vasemmalla. */
+    .grid > li:first-child { grid-column: 1 / -1; }
+    .grid > li:first-child .card { flex-direction: row; }
+    .grid > li:first-child .card-preview { flex: 0 0 58%; padding: 16px 0 16px 16px; }
+    .grid > li:first-child .card-body { padding: 32px 32px 28px; justify-content: center; }
+    .grid > li:first-child .facts { margin-top: 0; }
+    .grid > li:first-child h3 { font-size: 30px; }
     .small-grid { grid-template-columns: repeat(3, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) {

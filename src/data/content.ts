@@ -1,6 +1,8 @@
 import type { ImageMetadata } from 'astro';
 import govuokattiDesktop from '../assets/captures/govuokatti-desktop.jpg';
 import govuokattiMobile from '../assets/captures/govuokatti-mobile.jpg';
+import piecengoDesktop from '../assets/captures/piecengo-desktop.jpg';
+import piecengoMobile from '../assets/captures/piecengo-mobile.jpg';
 import pahkalaDesktop from '../assets/captures/pahkalaranch-desktop.jpg';
 import pahkalaMobile from '../assets/captures/pahkalaranch-mobile.jpg';
 import pekkaDesktop from '../assets/captures/pekkapudas-desktop.jpg';
@@ -31,12 +33,24 @@ export const PROJECTS: Project[] = [
     type: 'Asiakassivusto',
     name: 'Go Vuokatti',
     description:
-      "Sotkamolaisen aktiviteettikeskuksen sivustouudistus, johon kuului myös Piece'n GO -pizzerian sivusto. Vanha sivusto oli WordPressissä. Nyt omistaja rakentaa uudet sivut itse Sanityllä. Työn alla on tekoälychatbotti, joka vastaa asiakkaille yrityksen omalla tiedolla.",
+      'Sotkamolaisen aktiviteettikeskuksen sivustouudistus. Vanha sivusto oli WordPressissä. Nyt omistaja rakentaa uudet sivut itse Sanityllä. Työn alla on tekoälychatbotti, joka vastaa asiakkaille yrityksen omalla tiedolla.',
     role: 'Suunnittelin, toteutin ja julkaisin sivuston yksin, Claude apuna.',
     tech: ['Next.js', 'Sanity', 'RAG', 'pgvector'],
     url: 'https://govuokatti.fi',
     host: 'govuokatti.fi',
     preview: { kind: 'site', desktop: govuokattiDesktop, mobile: govuokattiMobile },
+  },
+  {
+    slug: 'piecengo',
+    type: 'Asiakassivusto',
+    name: "Piece'n GO",
+    description:
+      'Vuokattilaisen pizzabuffetin sivusto. Syntyi samassa uudistuksessa Go Vuokatin kanssa, ja omistaja päivittää hinnat ja sisällöt itse Sanityllä.',
+    role: 'Suunnittelin, toteutin ja julkaisin sivuston yksin, Claude apuna.',
+    tech: ['Next.js', 'Sanity'],
+    url: 'https://piecengo.fi',
+    host: 'piecengo.fi',
+    preview: { kind: 'site', desktop: piecengoDesktop, mobile: piecengoMobile },
   },
   {
     slug: 'pahkalaranch',
@@ -194,7 +208,7 @@ export const PIPELINE = [
 export const MATCH = [
   {
     want: 'Tekijä, joka saa asiat valmiiksi',
-    have: 'Kolme asiakassivustoa ja kaksi omaa tuotetta tuotannossa vuoden sisään.',
+    have: 'Neljä asiakassivustoa ja kaksi omaa tuotetta tuotannossa vuoden sisään.',
   },
   {
     want: 'Uteliaisuus uusiin työkaluihin',
