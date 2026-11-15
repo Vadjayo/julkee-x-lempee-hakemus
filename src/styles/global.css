@@ -22,6 +22,7 @@ body {
 }
 a { color: inherit; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; border-radius: 4px; }
+[hidden] { display: none !important; }
 img, video { display: block; max-width: 100%; }
 h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
@@ -56,12 +57,13 @@ h4 { font-size: 18px; letter-spacing: -0.01em; line-height: 1.2; }
   color: #000;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.2s var(--ease), border-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s;
 }
-.btn:hover { transform: translateY(-2px); }
+/* Hover ei liikuta nappia: liikkuva nappi alkaa nykiä kursorin alla. */
+.btn:hover { background: #fff; border-color: #fff; }
 .btn.ghost { background: transparent; color: var(--fg); border-color: #4a4a4a; }
-.btn.ghost:hover { border-color: var(--fg); }
-.btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.btn.ghost:hover { background: #1a1a1a; border-color: var(--fg); }
+.btn:disabled { opacity: 0.5; cursor: default; }
 .textlink { text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 4px; }
 .textlink:hover { text-decoration-thickness: 2px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }

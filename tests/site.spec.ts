@@ -22,15 +22,15 @@ async function scrollThrough(page: Page): Promise<void> {
 }
 
 test.describe('intro', () => {
-  test('purku päättyy itsestään alle 3,5 sekunnissa ja näkyy vain kerran istunnossa', async ({ page }) => {
+  test('purku ehtii näkyä, päättyy itsestään ja näkyy vain kerran istunnossa', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#intro')).toBeVisible();
     await expect(page.locator('#intro')).toContainText('Just another WordPress site');
-    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 5000 });
+    await expect(page.locator('html')).toHaveClass(/intro-done/, { timeout: 8000 });
     // Selaimen oma kello: millisekunnit sivun avaamisesta siihen, kun intro on poissa.
     const elapsed = Number(await page.locator('html').getAttribute('data-intro-ms'));
-    expect(elapsed).toBeGreaterThan(1500);
-    expect(elapsed).toBeLessThanOrEqual(3500);
+    expect(elapsed).toBeGreaterThan(4000);
+    expect(elapsed).toBeLessThanOrEqual(5500);
     await expect(page.locator('#intro')).toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
@@ -66,16 +66,37 @@ test('kokemuslaskuri laskee kuukaudet huhtikuusta 2026 tähän päivään', asyn
   await expect(page.locator('#xp-pct')).toHaveText(`${Math.round((months / 60) * 100)} %`);
 });
 
-test('rakennustyökalu rakentaa sivun ja kertoo ajan', async ({ page }) => {
-  await open(page);
-  await page.locator('#build-btn').scrollIntoViewIfNeeded();
-  await page.locator('#build-btn').click();
-  await expect(page.locator('#build-msg')).toHaveText(/^Valmis \d+,\d sekunnissa\. Lisäosia nolla\.$/, { timeout: 6000 });
-  await expect(page.locator('#build-pct')).toHaveText('Rakennettu 100 %');
-  await expect(page.locator('#build-btn')).toHaveText('Pura ja rakenna uudelleen');
-  for (const block of await page.locator('#stage .blk').all()) {
-    expect(Number(await block.evaluate((el) => getComputedStyle(el).opacity))).toBe(1);
-  }
+test.describe('rakennustyökalu', () => {
+  test('palat voi lyödä paikalleen yksi kerrallaan, ja valmis nappi vie yhteystietoihin', async ({ page }) => {
+    await open(page);
+    const hit = page.locator('#build-btn');
+    await hit.scrollIntoViewIfNeeded();
+    await expect(page.locator('#stage .slot.next')).toHaveCount(1);
+    for (let i = 1; i <= 6; i++) {
+      await hit.click();
+      await expect(page.locator('#stage .slot.placed')).toHaveCount(i);
+    }
+    await expect(page.locator('#build-pct')).toHaveText('Rakennettu 100 %');
+    await expect(page.locator('#build-msg')).toHaveText(/^Valmis \d+,\d sekunnissa\. Lisäosia nolla\.$/);
+    await expect(page.locator('#build-wp')).toHaveText(/^WordPress päivittää yhä lisäosaa \d+\/47$/);
+    await expect(page.locator('#stage a')).toHaveAttribute('href', '#yhteys');
+    await expect(page.locator('#stage a')).toBeVisible();
+
+    await expect(hit).toHaveText('Pura ja aloita alusta');
+    await hit.click();
+    await expect(page.locator('#stage .slot.placed')).toHaveCount(0);
+    await expect(page.locator('#build-pct')).toHaveText('Rakennettu 0 %');
+  });
+
+  test('Claude rakentaa koko sivun yhdellä painalluksella, ja lavaa voi napauttaa', async ({ page }) => {
+    await open(page);
+    await page.locator('#stage').scrollIntoViewIfNeeded();
+    await page.locator('#stage').click();
+    await expect(page.locator('#stage .slot.placed')).toHaveCount(1);
+    await page.locator('#build-auto').click();
+    await expect(page.locator('#build-msg')).toHaveText(/^Valmis \d+,\d sekunnissa\. Lisäosia nolla\.$/, { timeout: 6000 });
+    await expect(page.locator('#stage .slot.placed')).toHaveCount(6);
+  });
 });
 
 test.describe('esikatselut', () => {

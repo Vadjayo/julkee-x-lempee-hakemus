@@ -1,21 +1,34 @@
 ---
+/**
+ * Vastine Julkee x Lempeen purkutyökalulle: kävijä rakentaa pienen laskeutumissivun
+ * pala kerrallaan ja näkee oman aikansa. Valmiin sivun nappi on oikea linkki yhteystietoihin.
+ */
+const benefits = ['Verkkosivut', 'Hakukoneet', 'Automaatiot'];
 ---
 <section class="section" id="rakenna" aria-labelledby="rakenna-title">
   <div class="wrap">
-    <p class="kicker rv"><b>07</b> / Rakennustyökalu</p>
     <h2 id="rakenna-title" class="rv">Te puratte, minä rakennan</h2>
-    <p class="lead rv">Teidän sivullanne on purkutyökalu. Tein sille parin.</p>
+    <p class="lead rv">
+      Teidän sivullanne on purkutyökalu. Tein sille parin. Lyökää palat paikalleen itse tai antakaa Clauden hoitaa.
+    </p>
     <div class="builder rv">
-      <div class="b-head mono"><span>rakennustyökalu</span><span id="build-pct">Rakennettu 0 %</span></div>
-      <div class="stage" id="stage" aria-hidden="true">
-        <div class="blk nav">Valikko</div>
-        <div class="blk h">Otsikko</div>
-        <div class="blk c">Hyöty 1</div><div class="blk c">Hyöty 2</div><div class="blk c">Hyöty 3</div>
-        <div class="blk cta">Yhteydenotto</div>
+      <div class="b-head mono">
+        <span id="build-pct">Rakennettu 0 %</span>
+        <span id="build-time">0,0 s</span>
+      </div>
+      <div class="stage" id="stage">
+        <div class="slot nav"><div class="blk"><b>Sampo</b><span>Työt</span><span>Osaaminen</span><span>Yhteys</span></div></div>
+        <div class="slot h"><div class="blk">Tilalle tuli Sampo</div></div>
+        {benefits.map((text) => <div class="slot c"><div class="blk">{text}</div></div>)}
+        <div class="slot cta"><a class="blk" href="#yhteys">Ota yhteyttä</a></div>
       </div>
       <div class="b-foot">
-        <button class="btn" id="build-btn" type="button">Rakenna sivu</button>
-        <span id="build-msg" class="mono" role="status">Sivua ei ole vielä.</span>
+        <button class="btn" id="build-btn" type="button">Lyö pala paikalleen</button>
+        <button class="btn ghost" id="build-auto" type="button">Anna Clauden rakentaa</button>
+        <p class="b-status mono">
+          <span id="build-msg" role="status">Lyö ensimmäinen pala paikalleen.</span>
+          <span id="build-wp"></span>
+        </p>
       </div>
     </div>
     <noscript><p class="lead">Rakennustyökalu tarvitsee JavaScriptin. Muu sivu toimii ilman.</p></noscript>
@@ -24,17 +37,30 @@
 
 <style>
   .builder { margin-top: 48px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); overflow: hidden; }
-  .b-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--dim); flex-wrap: wrap; }
-  #build-pct { color: var(--fg); font-variant-numeric: tabular-nums; }
-  .stage { padding: clamp(16px, 4vw, 28px); display: grid; gap: 12px; min-height: 340px; grid-template-columns: repeat(3, 1fr); grid-auto-rows: min-content; align-content: center; overflow: hidden; }
-  .blk { border-radius: 10px; background: #1b1b1b; border: 1px solid #2c2c2c; height: 44px; opacity: 0; display: grid; place-items: center; font: 12px var(--mono); color: var(--dim); }
-  .blk.nav { grid-column: 1 / -1; height: 34px; }
-  .blk.h { grid-column: 1 / -1; height: 96px; background: var(--fg); color: #000; font: 800 clamp(16px, 3vw, 26px) var(--sans); letter-spacing: -0.02em; }
-  .blk.c { height: 84px; }
-  .blk.cta { grid-column: 2 / 3; background: var(--red); border-color: var(--red); color: #000; font-weight: 700; }
+  .b-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 13px; font-variant-numeric: tabular-nums; }
+  #build-time { color: var(--red); }
+  .stage { padding: clamp(16px, 4vw, 28px); display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); cursor: pointer; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+  .stage.done { cursor: default; }
+  .slot { border-radius: 10px; outline: 1px dashed #333; outline-offset: -1px; display: grid; }
+  .slot.next { outline: 2px dashed var(--red); outline-offset: -2px; }
+  .slot.placed { outline: none; }
+  .slot.nav { grid-column: 1 / -1; height: 40px; }
+  .slot.h { grid-column: 1 / -1; height: 104px; }
+  .slot.c { height: 84px; }
+  .slot.cta { grid-column: 2 / 3; height: 48px; }
+  .blk { border-radius: 10px; background: #1b1b1b; border: 1px solid #2c2c2c; display: grid; place-items: center; font: 12px var(--mono); color: var(--dim); text-decoration: none; visibility: hidden; }
+  .slot.placed .blk { visibility: visible; }
+  .nav .blk { display: flex; justify-content: flex-start; gap: 18px; padding: 0 16px; }
+  .nav .blk b { color: var(--fg); margin-right: auto; }
+  .h .blk { background: var(--fg); border-color: var(--fg); color: #000; font: 800 clamp(18px, 3.4vw, 30px) var(--sans); letter-spacing: -0.02em; }
+  .c .blk { color: var(--fg); font-size: 13px; }
+  .cta .blk { background: var(--red); border-color: var(--red); color: #000; font: 700 14px var(--sans); }
   .b-foot { display: flex; gap: 12px 16px; align-items: center; padding: 18px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-  #build-msg { font-size: 13px; color: var(--dim); }
+  .b-status { display: grid; gap: 2px; font-size: 13px; color: var(--dim); min-height: 40px; align-content: center; }
+  #build-msg { color: var(--fg); }
   @media (max-width: 480px) {
-    .blk.cta { grid-column: 1 / -1; }
+    .slot.cta { grid-column: 1 / -1; }
+    .nav .blk { gap: 10px; padding: 0 10px; font-size: 11px; }
+    .c .blk { font-size: 11px; }
   }
 </style>

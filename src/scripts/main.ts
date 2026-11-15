@@ -57,18 +57,18 @@ function intro(): void {
     node.replaceWith(fragment);
   }
 
-  // Kokonaiskesto: 500 + 1700 + 150 + 400 ms = 2,75 s. Varaa jää sivun lataukselle, jotta raja 3,5 s pitää.
-  const HOLD = 500;
-  const FALL = 1700;
+  // Ensin 1,5 s aikaa lukea WordPress-näkymä, sitten 2,6 s purku. Yhteensä noin 4,65 s häivytyksineen.
+  const HOLD = 1500;
+  const FALL = 2600;
   setTimeout(() => {
     if (done) return;
     for (const char of chars) {
       const dx = (Math.random() - 0.5) * 240;
       const rot = (Math.random() - 0.5) * 540;
-      const duration = 700 + Math.random() * 500;
+      const duration = 900 + Math.random() * 600;
       char.animate([{ transform: 'none' }, { transform: `translate(${dx}px, 110vh) rotate(${rot}deg)` }], {
         duration,
-        delay: Math.random() * (FALL - 1150),
+        delay: Math.random() * (FALL - 1500),
         easing: 'cubic-bezier(.5,0,.9,.5)',
         fill: 'forwards',
       });
@@ -234,73 +234,111 @@ function pipeline(): void {
 
 /* ---------- Rakennustyökalu ---------- */
 function builder(): void {
-  const blocks = $$('#stage .blk');
-  const button = $<HTMLButtonElement>('#build-btn');
+  const stage = $('#stage');
+  const slots = $$('#stage .slot');
+  const hit = $<HTMLButtonElement>('#build-btn');
+  const auto = $<HTMLButtonElement>('#build-auto');
   const pct = $('#build-pct');
+  const clock = $('#build-time');
   const msg = $('#build-msg');
-  let built = false;
-  let busy = false;
-  const setPct = (value: number) => (pct.textContent = `Rakennettu ${value} %`);
+  const wp = $('#build-wp');
+  const TOTAL_PLUGINS = 47;
+  let placed = 0;
+  let startedAt = 0;
+  let ticker = 0;
+  let autoTimer = 0;
+  let plugin = 0;
 
-  const build = () => {
-    busy = true;
-    button.disabled = true;
-    msg.textContent = 'Rakennetaan';
-    const start = performance.now();
-    const step = reduce ? 0 : 260;
-    const duration = reduce ? 1 : 700;
-    blocks.forEach((block, i) => {
-      const dx = (Math.random() - 0.5) * 600;
-      const dy = -200 - Math.random() * 300;
-      const rot = (Math.random() - 0.5) * 90;
-      block.animate(
-        [
-          { opacity: 0, transform: `translate(${dx}px,${dy}px) rotate(${rot}deg)` },
-          { opacity: 1, transform: 'translate(0,6px) rotate(0)', offset: 0.8 },
-          { opacity: 1, transform: 'none' },
-        ],
-        { duration, delay: i * step, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' },
-      );
-      setTimeout(() => setPct(Math.round(((i + 1) / blocks.length) * 100)), i * step + duration);
-    });
-    setTimeout(
-      () => {
-        const seconds = fi((performance.now() - start) / 1000, 1);
-        msg.textContent = `Valmis ${seconds} sekunnissa. Lisäosia nolla.`;
-        button.textContent = 'Pura ja rakenna uudelleen';
-        button.disabled = false;
-        busy = false;
-        built = true;
-      },
-      (blocks.length - 1) * step + duration + 50,
-    );
+  const elapsed = () => (startedAt ? (performance.now() - startedAt) / 1000 : 0);
+  const mark = () => {
+    slots.forEach((slot, i) => slot.classList.toggle('next', i === placed));
+    pct.textContent = `Rakennettu ${Math.round((placed / slots.length) * 100)} %`;
   };
 
-  const demolish = (then: () => void) => {
-    busy = true;
-    button.disabled = true;
-    msg.textContent = 'Puretaan';
-    const duration = reduce ? 1 : 600;
-    for (const block of blocks) {
-      const dx = (Math.random() - 0.5) * 200;
-      const rot = (Math.random() - 0.5) * 120;
+  const start = () => {
+    startedAt = performance.now();
+    plugin = 1;
+    wp.textContent = `Samaan aikaan WordPressissä: päivitetään lisäosaa ${plugin}/${TOTAL_PLUGINS}`;
+    ticker = window.setInterval(() => {
+      clock.textContent = `${fi(elapsed(), 1)} s`;
+      // WordPress ehtii yhden lisäosan noin puolessatoista sekunnissa.
+      const now = Math.min(TOTAL_PLUGINS, 1 + Math.floor(elapsed() / 1.5));
+      if (now !== plugin) {
+        plugin = now;
+        wp.textContent = `Samaan aikaan WordPressissä: päivitetään lisäosaa ${plugin}/${TOTAL_PLUGINS}`;
+      }
+    }, 100);
+  };
+
+  const finish = () => {
+    clearInterval(ticker);
+    clearInterval(autoTimer);
+    const seconds = fi(elapsed(), 1);
+    clock.textContent = `${seconds} s`;
+    msg.textContent = `Valmis ${seconds} sekunnissa. Lisäosia nolla.`;
+    wp.textContent = `WordPress päivittää yhä lisäosaa ${plugin}/${TOTAL_PLUGINS}`;
+    stage.classList.add('done');
+    hit.textContent = 'Pura ja aloita alusta';
+    auto.hidden = true;
+    auto.disabled = false;
+  };
+
+  const place = () => {
+    if (placed >= slots.length) return;
+    if (placed === 0) start();
+    const slot = slots[placed]!;
+    const block = slot.firstElementChild as HTMLElement;
+    slot.classList.add('placed');
+    if (!reduce) {
+      const tilt = (Math.random() - 0.5) * 16;
       block.animate(
         [
+          { opacity: 0, transform: `translateY(-140px) rotate(${tilt}deg) scale(1.08)` },
+          { opacity: 1, transform: 'translateY(8px) rotate(0) scale(1)', offset: 0.7 },
+          { opacity: 1, transform: 'translateY(-3px)', offset: 0.85 },
           { opacity: 1, transform: 'none' },
-          { opacity: 0, transform: `translate(${dx}px,300px) rotate(${rot}deg)` },
         ],
-        { duration, delay: reduce ? 0 : Math.random() * 200, easing: 'cubic-bezier(.5,0,.9,.5)', fill: 'forwards' },
+        { duration: 420, easing: 'cubic-bezier(.3,.7,.3,1)' },
       );
+      // Pieni tärähdys koko lavalle, kun pala osuu paikalleen.
+      stage.animate([{ transform: 'none' }, { transform: 'translateY(3px)' }, { transform: 'none' }], { duration: 160, delay: 280 });
     }
-    setPct(0);
-    setTimeout(then, duration + 250);
+    placed++;
+    mark();
+    if (placed === slots.length) finish();
+    else if (!auto.disabled) msg.textContent = `${placed}/${slots.length} palaa paikallaan`;
   };
 
-  button.addEventListener('click', () => {
-    if (busy) return;
-    if (built) demolish(build);
-    else build();
+  const reset = () => {
+    clearInterval(ticker);
+    clearInterval(autoTimer);
+    placed = 0;
+    startedAt = 0;
+    slots.forEach((slot) => slot.classList.remove('placed'));
+    stage.classList.remove('done');
+    clock.textContent = '0,0 s';
+    msg.textContent = 'Lyö ensimmäinen pala paikalleen.';
+    wp.textContent = '';
+    hit.textContent = 'Lyö pala paikalleen';
+    auto.hidden = false;
+    mark();
+  };
+
+  hit.addEventListener('click', () => (placed >= slots.length ? reset() : place()));
+  // Lavaa voi myös napauttaa suoraan. Valmiin sivun linkki toimii normaalisti.
+  stage.addEventListener('click', (event) => {
+    if (placed >= slots.length) return;
+    event.preventDefault();
+    place();
   });
+  auto.addEventListener('click', () => {
+    if (placed >= slots.length) return;
+    auto.disabled = true;
+    msg.textContent = 'Claude rakentaa';
+    place();
+    autoTimer = window.setInterval(place, reduce ? 0 : 300);
+  });
+  mark();
 }
 
 /* ---------- Sivu mitattuna ---------- */
