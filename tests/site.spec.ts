@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { gzipSync } from 'node:zlib';
 
 /** Avaa sivun niin, että intro on jo nähty. Introa testataan erikseen. */
 async function open(page: Page): Promise<void> {
@@ -239,7 +240,11 @@ test('ensimmäinen lataus on alle 300 kt ilman videoita, eikä evästeitä asete
   page.on('response', async (response) => {
     if (/\.(webm|mp4)/.test(response.url())) videos.push(response.url());
     const body = await response.body().catch(() => null);
-    if (body) bytes += body.length;
+    if (!body) return;
+    // body() palauttaa puretun sisällön. Tekstitiedostot lasketaan gzip-pakattuina,
+    // koska niin ne siirtyvät tuotannossa. Kuvat ovat jo valmiiksi pakattuja.
+    const isText = /html|javascript|css|json|svg/.test(response.headers()['content-type'] ?? '');
+    bytes += isText ? gzipSync(body).length : body.length;
   });
   await page.goto('/', { waitUntil: 'load' });
   await page.waitForTimeout(500);
