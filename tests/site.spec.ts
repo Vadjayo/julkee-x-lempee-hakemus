@@ -298,6 +298,11 @@ test('rakenne kestää tarkastelun: yksi h1, noindex, kelvollinen JSON-LD, otsik
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('html')).toHaveAttribute('lang', 'fi');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+  // Linkin esikatselukuva on olemassa ja oikean kokoinen.
+  const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content');
+  const image = await page.request.get(new URL(ogImage!).pathname);
+  expect(image.status()).toBe(200);
+  expect(image.headers()['content-type']).toBe('image/png');
   // Rakenteinen data on palvelimen lähettämässä HTML:ssä, ei skriptin lisäämää.
   const html = await (await page.request.get('/')).text();
   const raw = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];

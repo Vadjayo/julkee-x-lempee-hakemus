@@ -13,7 +13,7 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 - Rakennustyökalu on intron vastakohta samalla tekniikalla: kävijä lyö palat paikalleen, ja jokainen pala kootaan sisään lentävistä sirpaleista (`src/scripts/builder-gl.ts`). Purku räjäyttää valmiin sivun. Valmiin sivun nappi on oikea linkki yhteystietoihin.
 - Selaimessa mitatut luvut. Lighthouse-pisteet luetaan tiedostosta, jonka skripti kirjoittaa tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
 - Ei evästeitä, ei seurantaa, ei ulkoisia fontteja. Sivulla on `noindex`, koska siinä on puhelinnumero.
-- Semanttinen HTML ja `Person`-tyyppinen JSON-LD.
+- Semanttinen HTML, JSON-LD (`Person` ja `ProfilePage`) ja linkin esikatselukuva (Open Graph).
 - Sisältö näkyy ilman JavaScriptiä, ja `prefers-reduced-motion` poistaa intron, vierityksen ja videot.
 
 ## Rakenne
@@ -28,6 +28,7 @@ Tuotanto: https://julkee-x-lempee-hakemus.vercel.app
 | `src/scripts/builder-gl.ts` | Rakennustyökalun sirpaleet ja kipinät |
 | `scripts/capture.ts` | Esikatselujen kaappaus Playwrightilla |
 | `scripts/lighthouse.ts` | Lighthouse-ajo ja pisteiden tallennus |
+| `scripts/og.ts` | Linkin esikatselukuvan (`public/og.png`) luonti |
 | `scripts/check-text.ts`, `scripts/check-links.ts` | Kieli- ja linkkitarkistukset |
 | `tests/site.spec.ts` | Playwright-testit |
 
@@ -69,6 +70,7 @@ BASE_URL=https://julkee-x-lempee-hakemus.vercel.app npm test   # tuotantoa vaste
 npm run check:text
 npm run check:links
 npm run lighthouse                                   # kirjoittaa src/data/lighthouse.json
+npm run og                                           # päivittää linkin esikatselukuvan, jos otsikko muuttuu
 ```
 
 ### Tulokset 15.11.2026
@@ -80,7 +82,7 @@ npm run lighthouse                                   # kirjoittaa src/data/light
 | Leveydet 375, 768 ja 1440 px | Ei vaakavieritystä, ei päällekkäisiä elementtejä, ei konsolivirheitä. Kuvakaappaukset katsottu läpi. |
 | Lighthouse, mobiili, tuotanto, kolme ajoa | Suorituskyky 100, saavutettavuus 100, parhaat käytännöt 100 |
 | Lighthouse, hakukoneet | 69. Ainoa pisteitä vievä tarkistus on `is-crawlable`, eli tarkoituksellinen `noindex`. |
-| Ensimmäinen lataus ilman videoita | Raja 300 kt. Puhelin (390 px, tiheys 3) 218 kt, tabletti (768 px, tiheys 2) 228 kt, työpöytä (1440 px) 177 kt, tiheällä näytöllä 263 kt. Luvuissa ovat mukana laiskasti ladattavat esikatselukuvat, jotka selain hakee ennakkoon. |
+| Ensimmäinen lataus ilman videoita | Raja 300 kt. Tuotannosta mitattuna puhelinemulaatiolla (390 px, tiheys 3) 227 kt ja työpöydällä (1440 px) 200 kt. Luvuissa ovat mukana laiskasti ladattavat esikatselukuvat, jotka selain hakee ennakkoon. |
 | Ajatusviivat ja otsikoiden välimerkit | Ei löytynyt |
 | Ulkoiset linkit | 7/8 vastasi 200. LinkedIn vastasi 999, ks. alla. |
 | `astro check` | 0 virhettä, 0 varoitusta |

@@ -15,7 +15,8 @@
     "test:browsers": "playwright test",
     "check:text": "node scripts/check-text.ts",
     "check:links": "node scripts/check-links.ts",
-    "lighthouse": "node scripts/lighthouse.ts"
+    "lighthouse": "node scripts/lighthouse.ts",
+    "og": "node scripts/og.ts"
   },
   "dependencies": {
     "astro": "^7.4.12"
