@@ -8,6 +8,10 @@ interface Props {
   actions?: string[];
 }
 const { bot, lines, caption, time, actions = [] } = Astro.props;
+
+// Peitetty yrityksen nimi piirretään mustana palkkina. Ruudunlukija kuulee, että nimi on peitetty.
+const REDACTED = '[yritys]';
+const parts = (text: string) => text.split(REDACTED);
 ---
 <figure class="tg" data-play="once">
   <div class="tg-head" aria-hidden="true">
@@ -18,7 +22,16 @@ const { bot, lines, caption, time, actions = [] } = Astro.props;
   <div class="tg-body">
     <div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="msg">
-      {lines.map((line, i) => <p class:list={['tl', line.kind]} style={`--i:${i}`}>{line.text}</p>)}
+      {lines.map((line, i) => (
+        <p class:list={['tl', line.kind]} style={`--i:${i}`}>
+          {parts(line.text).map((part, n) => (
+            <>
+              {n > 0 && <span class="redact" role="img" aria-label="yrityksen nimi peitetty" />}
+              {part}
+            </>
+          ))}
+        </p>
+      ))}
       {time && <p class="tl time" style={`--i:${lines.length}`}>{time}</p>}
     </div>
     {actions.length > 0 && (
@@ -45,6 +58,7 @@ const { bot, lines, caption, time, actions = [] } = Astro.props;
   .tl.score + .tl.meta { margin-top: 8px; }
   .tl.meta { font: 11px var(--mono); color: var(--dim); }
   .tl.score { color: var(--fg); font-weight: 600; }
+  .redact { display: inline-block; width: 4.2em; height: 0.95em; vertical-align: -0.12em; border-radius: 2px; background: #000; border: 1px solid #3a3a3a; }
   .tl.time { margin-top: 2px; text-align: right; font: 10.5px var(--mono); color: var(--dim); }
   .actions { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; max-width: 94%; margin-top: 6px; }
   .actions span { padding: 7px 4px; text-align: center; border-radius: 8px; background: #1c1c1c; border: 1px solid #2c2c2c; font-size: 12.5px; font-weight: 600; color: var(--fg); }

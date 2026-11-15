@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     type: 'Agentti',
     name: 'Työnhakuagentti',
     description:
-      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on sen arvio teidän ilmoituksestanne.',
+      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on aito viesti.',
     note: 'Rakensin omaan käyttöön.',
     tech: ['Claude', 'Tavily', 'Telegram'],
     preview: { kind: 'telegram' },
@@ -106,23 +106,6 @@ export const PROJECTS: Project[] = [
     host: 'reskontratutka.vercel.app',
     preview: { kind: 'site', desktop: reskontraDesktop, mobile: reskontraMobile, video: 'reskontratutka' },
   },
-];
-
-/**
- * Ote Työnhakuagentin aidosta Telegram-viestistä: agentin arvio tästä ilmoituksesta.
- * Pois jätetyt kohdat on merkitty hakasulkeilla. Muuten teksti on agentin omaa.
- */
-export const JOB_AGENT_MESSAGE: { text: string; kind?: 'title' | 'meta' | 'score' }[] = [
-  { text: '100/100 Oman median asiantuntija', kind: 'title' },
-  { text: 'Julkee x Lempee', kind: 'meta' },
-  {
-    text: 'Osuu: Paikka on hybrid-työ Helsingissä, joten joustavampi kuin puhdas lähityö. Seniority on junior ja vaadittavat taidot (Astro, Claude Code, GitHub, Vercel) ovat Sampon päivittäisiä työkaluja. Hakukoneoptimointi vastaa Sampon tuotannon SEO-osaamista. [...]',
-  },
-  {
-    text: 'Puuttuu: Hakija asuu Oulussa, joten Helsinkiin muutto olisi tarpeen. CRM-järjestelmät ja markkinoinnin analytiikka ovat vasta opettelussa, mutta ne ovat vain nice-to-have.',
-  },
-  { text: 'Kannattaako hakea: Kyllä. Paikka on vahva osuma Sampon taidoille. [...]', kind: 'score' },
-  { text: 'Hyväksy → luonnos tulee seuraavan ajon mukana.', kind: 'meta' },
 ];
 
 export const SMALL_WORKS = [
