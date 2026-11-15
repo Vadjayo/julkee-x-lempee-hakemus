@@ -1,0 +1,36 @@
+---
+import { MATCH } from '../data/content';
+---
+<section class="section" id="osuvuus" aria-labelledby="osuvuus-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>05</b> / Ilmoituksenne rivi riviltä</p>
+    <h2 id="osuvuus-title" class="rv">Te toivoitte, minä vastaan</h2>
+    <dl class="match">
+      {MATCH.map((row) => (
+        <div class="row rv">
+          <span class="tick" aria-hidden="true">✓</span>
+          <dt>{row.want}</dt>
+          <dd>{row.have}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .match { margin-top: 48px; }
+  .row { display: grid; grid-template-columns: 36px minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); align-items: start; }
+  .tick { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--red); background: var(--red); display: grid; place-items: center; font: 700 14px var(--mono); color: #000; }
+  :global(.js) .tick { transition: background 0.4s 0.35s, color 0.4s 0.35s, border-color 0.4s 0.35s; }
+  :global(.js) .row:not(.in) .tick { background: transparent; color: transparent; border-color: var(--line); }
+  dt { color: var(--dim); }
+  dd { font-weight: 600; }
+  @media (max-width: 640px) {
+    .row { grid-template-columns: 36px 1fr; row-gap: 6px; }
+    dd { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .tick { transition: none; }
+    :global(.js) .row:not(.in) .tick { background: var(--red); color: #000; border-color: var(--red); }
+  }
+</style>
