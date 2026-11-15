@@ -1,0 +1,52 @@
+---
+import { CONFIG } from '../config';
+
+// Ilman JavaScriptiä näytetään buildin hetken tilanne. Selain laskee luvun uudelleen.
+function monthsSince(year: number, month: number, now: Date): number {
+  return Math.max(0, (now.getFullYear() - year) * 12 + (now.getMonth() + 1 - month));
+}
+const { agentStart, requiredMonths } = CONFIG;
+const months = Math.min(requiredMonths, monthsSince(agentStart.year, agentStart.month, new Date()));
+const pct = Math.round((months / requiredMonths) * 100);
+---
+<section class="section" id="kokemus" aria-labelledby="kokemus-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>01</b> / Kokemusvaatimus</p>
+    <h2 id="kokemus-title" class="rv">Viisi vuotta agenttista verkkosivukehitystä</h2>
+    <p class="lead rv">Laskin, paljonko minulta löytyy. Ensimmäisen agenttini rakensin huhtikuussa 2026.</p>
+    <div
+      class="xp rv"
+      id="xp"
+      data-year={agentStart.year}
+      data-month={agentStart.month}
+      data-required={requiredMonths}
+    >
+      <p class="xp-big"><span id="xp-months">{months}</span> kk <span class="xp-of">/ {requiredMonths} kk</span></p>
+      <div class="xp-bar" role="img" aria-label={`Kokemusvaatimuksesta täytetty ${pct} prosenttia`} id="xp-bar-wrap">
+        <i id="xp-bar" style={`transform:scaleX(${Math.max(pct, 2) / 100})`}></i>
+      </div>
+      <p class="xp-row mono">Täytetty <b id="xp-pct">{pct} %</b></p>
+      <p class="xp-note">
+        Vaatimus täyttyy huhtikuussa 2031. Sitä odotellessa olen julkaissut kolme asiakassivustoa, kaksi omaa tuotetta ja
+        joukon agentteja. <strong>Ehdotan, että lasketaan julkaisuja eikä kuukausia.</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .xp { margin-top: 48px; border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 4vw, 32px); background: var(--card); }
+  .xp-big { font-size: clamp(40px, 7vw, 88px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .xp-of { color: var(--dim); }
+  .xp-bar { height: 18px; border-radius: 999px; background: #1a1a1a; margin: 20px 0 14px; overflow: hidden; }
+  .xp-bar i { display: block; height: 100%; background: var(--red); transform-origin: left; }
+  :global(.js) .xp-bar i { transition: transform 1.6s var(--ease); }
+  :global(.js) .xp:not(.counted) .xp-bar i { transform: scaleX(0) !important; }
+  .xp-row { font-size: 14px; color: var(--dim); }
+  .xp-row b { color: var(--fg); font-weight: 400; }
+  .xp-note { margin-top: 20px; color: var(--dim); max-width: 62ch; }
+  .xp-note strong { color: var(--fg); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .xp-bar i { transition: none; }
+  }
+</style>
