@@ -215,10 +215,6 @@ export const MATCH = [
   },
   { want: 'Käyttäjälähtöisyys', have: 'FutisPlanner syntyi, koska olin itse turhautunut käyttäjä.' },
   { want: 'Oma-aloitteisuus', have: 'Kukaan ei tilannut Ilonaa. Nyt sillä on maksava asiakas.' },
-  {
-    want: 'Neuvonantajan ote',
-    have: 'Myyntityö opetti kuuntelemaan. Jos asiakas tarvitsee muuta kuin pyytää, sanon sen.',
-  },
   { want: 'Selkeä suomi', have: 'Luitte tänne asti.' },
 ];
 
