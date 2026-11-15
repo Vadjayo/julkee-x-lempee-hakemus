@@ -194,41 +194,6 @@ function whenVisible(el: Element, callback: (visible: boolean) => void, threshol
   new IntersectionObserver((entries) => entries.forEach((e) => callback(e.isIntersecting)), { threshold }).observe(el);
 }
 
-/* ---------- Kokemuslaskuri ---------- */
-function experience(): void {
-  const box = $('#xp');
-  const startYear = Number(box.dataset.year);
-  const startMonth = Number(box.dataset.month);
-  const required = Number(box.dataset.required);
-  const now = new Date();
-  const months = Math.min(required, Math.max(0, (now.getFullYear() - startYear) * 12 + (now.getMonth() + 1 - startMonth)));
-  const pct = Math.round((months / required) * 100);
-  const monthsEl = $('#xp-months');
-  let ran = false;
-
-  const run = () => {
-    if (ran) return;
-    ran = true;
-    $('#xp-pct').textContent = `${pct} %`;
-    $('#xp-bar-wrap').setAttribute('aria-label', `Kokemusvaatimuksesta täytetty ${pct} prosenttia`);
-    $('#xp-bar').style.transform = `scaleX(${Math.max(pct, 2) / 100})`;
-    box.classList.add('counted');
-    if (reduce) {
-      monthsEl.textContent = String(months);
-      return;
-    }
-    const start = performance.now();
-    const DURATION = 1200;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / DURATION);
-      monthsEl.textContent = String(Math.round(months * p));
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  };
-  whenVisible(box, (visible) => visible && run(), 0.4);
-}
-
 /* ---------- Projektien esikatselut ---------- */
 function previews(): void {
   // Mockit: animaatio pyörii vain näkyvissä. "once" käynnistyy kerran ja jää näkyviin.
@@ -430,7 +395,6 @@ function metrics(): void {
 intro();
 dot();
 reveal();
-experience();
 previews();
 pipeline();
 builder();

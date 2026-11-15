@@ -226,7 +226,7 @@ export const MATCH = [
 export const VERSUS = [
   { topic: 'Lisäosat', wp: '47, joista 14 vanhentunutta', me: 'Ei yhtään' },
   { topic: 'Päivitykset', wp: 'Perjantaina kello 16', me: 'Kahdeksan tuntia kuussa, teidän piikkiinne' },
-  { topic: 'Kun jokin hajoaa', wp: 'Valkoinen ruutu', me: 'Kerron heti. Mokista ei rangaista, hiljaisuudesta kyllä' },
+  { topic: 'Kun jokin hajoaa', wp: 'Valkoinen ruutu', me: 'Sanon sen heti ja korjaan' },
   { topic: 'Tietoturva', wp: 'Riippuu lisäosasta', me: 'Yli 1700 testiä ja tietoturva-auditointi Ilonassa' },
 ];
 

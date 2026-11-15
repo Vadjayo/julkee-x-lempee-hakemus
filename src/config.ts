@@ -25,7 +25,4 @@ export const CONFIG = {
   credly: 'https://www.credly.com/users/sampo-rahja',
   repo: 'https://github.com/Vadjayo/julkee-x-lempee-hakemus',
   jobAd: 'https://julkeexlempee.fi/tuhoa-wordpress',
-  /** Ensimmäinen agentti valmistui huhtikuussa 2026. Kokemuslaskuri lähtee tästä. */
-  agentStart: { year: 2026, month: 4 },
-  requiredMonths: 60,
 } as const;

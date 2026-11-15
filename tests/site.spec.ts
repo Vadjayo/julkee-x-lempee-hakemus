@@ -62,15 +62,6 @@ test('punainen piste sammuu ja näyttää viestin', async ({ page }) => {
   await expect(dot).toBeDisabled();
 });
 
-test('kokemuslaskuri laskee kuukaudet huhtikuusta 2026 tähän päivään', async ({ page }) => {
-  await open(page);
-  const now = new Date();
-  const months = Math.min(60, Math.max(0, (now.getFullYear() - 2026) * 12 + (now.getMonth() + 1 - 4)));
-  await page.locator('#xp').scrollIntoViewIfNeeded();
-  await expect(page.locator('#xp-months')).toHaveText(String(months));
-  await expect(page.locator('#xp-pct')).toHaveText(`${Math.round((months / 60) * 100)} %`);
-});
-
 test.describe('rakennustyökalu', () => {
   test('palat voi lyödä paikalleen yksi kerrallaan, ja valmis nappi vie yhteystietoihin', async ({ page }) => {
     await open(page);
