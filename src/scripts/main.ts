@@ -21,6 +21,25 @@ function dot(): void {
   });
 }
 
+/* ---------- Intron uusinta ---------- */
+function replay(): void {
+  const button = $<HTMLButtonElement>('#replay');
+  // Nappia ei näytetä, jos liikettä on rajoitettu: silloin introa ei ole lainkaan.
+  if (reduce) return;
+  button.hidden = false;
+  button.addEventListener('click', () => {
+    try {
+      sessionStorage.removeItem('intro-seen');
+    } catch {
+      // Jos tallennus on estetty, intro näkyy joka latauksella muutenkin.
+    }
+    // Sivu ladataan uudelleen ylhäältä, jolloin intro alkaa puhtaalta pöydältä.
+    history.scrollRestoration = 'manual';
+    scrollTo(0, 0);
+    location.reload();
+  });
+}
+
 /* ---------- Ilmestyminen vierittäessä ---------- */
 function reveal(): void {
   const items = $$('.rv');
@@ -255,7 +274,7 @@ function builder(): void {
     slots.forEach((slot) => slot.classList.remove('placed'));
     stage.classList.remove('done');
     clock.textContent = '0,0 s';
-    msg.textContent = 'Lyö ensimmäinen pala paikalleen.';
+    msg.textContent = 'Lyökää ensimmäinen pala paikalleen.';
     wp.textContent = '';
     hit.textContent = 'Lyö pala paikalleen';
     hit.disabled = false;
@@ -325,6 +344,7 @@ function metrics(): void {
 
 intro();
 dot();
+replay();
 reveal();
 previews();
 pipeline();
