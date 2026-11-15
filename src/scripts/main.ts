@@ -89,6 +89,52 @@ function previews(): void {
   }
   if (reduce) return;
 
+  // Pitkä viesti vierii kiinteän korkuisessa ikkunassa. Hiiri tai kohdistus pysäyttää sen lukemista varten.
+  for (const view of $$('[data-chat]')) {
+    const track = view.firstElementChild as HTMLElement;
+    let animation: Animation | null = null;
+    let visible = false;
+    let held = false;
+    const sync = () => {
+      if (!animation) return;
+      if (visible && !held) animation.play();
+      else animation.pause();
+    };
+    const build = () => {
+      animation?.cancel();
+      animation = null;
+      const distance = track.scrollHeight - view.clientHeight;
+      view.classList.toggle('auto', distance > 8);
+      if (distance <= 8) return;
+      animation = track.animate(
+        [
+          { transform: 'translateY(0)', offset: 0 },
+          { transform: 'translateY(0)', offset: 0.1, easing: 'cubic-bezier(.45,0,.55,1)' },
+          { transform: 'translateY(' + -distance + 'px)', offset: 0.9 },
+          { transform: 'translateY(' + -distance + 'px)', offset: 1 },
+        ],
+        // Viive antaa rivien ilmestyä ensin. Nopeus on noin 22 pikseliä sekunnissa.
+        { duration: Math.max(9000, distance * 45), iterations: Infinity, direction: 'alternate', delay: 5200 },
+      );
+      animation.pause();
+      sync();
+    };
+    build();
+    new ResizeObserver(build).observe(view);
+    whenVisible(view, (now) => {
+      visible = now;
+      sync();
+    });
+    const hold = (value: boolean) => () => {
+      held = value;
+      sync();
+    };
+    view.addEventListener('pointerenter', hold(true));
+    view.addEventListener('pointerleave', hold(false));
+    view.addEventListener('focus', hold(true));
+    view.addEventListener('blur', hold(false));
+  }
+
   for (const preview of $$('[data-preview]')) {
     const animations: Animation[] = [];
     const frames = $$('[data-scroll]').filter((el) => preview.contains(el));
