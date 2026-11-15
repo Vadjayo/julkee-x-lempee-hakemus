@@ -1,0 +1,54 @@
+---
+/**
+ * Feikki-WordPress, joka puretaan sivun tieltä.
+ * Näkyy vain, kun JavaScript on käytössä, liikettä ei ole rajoitettu
+ * ja intro on tässä istunnossa vielä näkemättä (ks. Base.astro).
+ */
+---
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-bar"><span>Ohjausnäkymä</span><span>Päivitykset (14)</span><span>Lisäosat (47)</span><span>Kommentit (0)</span></div>
+  <p class="intro-notice">14 lisäosaa odottaa päivitystä. Yksi niistä kaataa sivun perjantaina</p>
+  <div class="intro-old">
+    <p class="intro-title">Sampon hakemus</p>
+    <p class="intro-sub">Just another WordPress site</p>
+  </div>
+</div>
+<div class="intro-hud" id="intro-hud">
+  <span id="intro-pct" role="status">Purettu 0 %</span>
+  <span class="intro-meter"><i id="intro-meter"></i></span>
+  <button id="intro-skip" type="button">Ohita purku</button>
+</div>
+
+<style>
+  .intro, .intro-hud { display: none; }
+  :global(.js:not(.intro-done)) .intro { display: flex; }
+  :global(.js:not(.intro-done)) .intro-hud { display: flex; }
+  :global(.js:not(.intro-done) body) { overflow: hidden; }
+  .intro {
+    position: fixed; inset: 0; z-index: 50;
+    flex-direction: column;
+    background: #f0f0f1; color: #1d2327;
+    font-family: Georgia, 'Times New Roman', serif;
+    transition: opacity 0.4s;
+  }
+  .intro.gone, .intro-hud.gone { opacity: 0; pointer-events: none; }
+  .intro-bar { background: #1d2327; color: #f0f0f1; font: 13px var(--sans); padding: 8px 16px; display: flex; gap: 18px; flex-wrap: wrap; }
+  .intro-notice { background: #fff; border-left: 4px solid #d63638; margin: 16px; padding: 12px 16px; font: 14px var(--sans); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); }
+  .intro-old { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px 24px 80px; }
+  .intro-title { font-size: clamp(34px, 6vw, 64px); line-height: 1.1; }
+  .intro-sub { font-size: 18px; color: #50575e; margin-top: 10px; }
+  .intro :global(.ch) { display: inline-block; white-space: pre; }
+  .intro-hud {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 51;
+    justify-content: space-between; align-items: center; gap: 16px;
+    padding: 12px 20px;
+    background: #000; color: var(--fg);
+    font: 14px var(--mono);
+    transition: opacity 0.4s;
+  }
+  #intro-pct { min-width: 13ch; }
+  .intro-meter { flex: 1; height: 4px; background: #222; border-radius: 4px; overflow: hidden; }
+  .intro-meter i { display: block; height: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; }
+  #intro-skip { background: none; border: 1px solid #555; color: var(--fg); font: 13px var(--mono); min-height: 40px; padding: 6px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+  #intro-skip:hover { border-color: var(--fg); }
+</style>
