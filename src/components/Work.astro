@@ -22,7 +22,7 @@ import TelegramMock from './TelegramMock.astro';
               )}
               {p.preview.kind === 'ilona' && <IlonaMock />}
               {p.preview.kind === 'telegram' && (
-                <TelegramMock bot={p.name} lines={JOB_AGENT_MESSAGE} caption="Ote aidosta viestistä 20.10.2026" />
+                <TelegramMock bot={p.name} lines={JOB_AGENT_MESSAGE} caption="Ote aidosta viestistä" time="15.21" actions={['Hyväksy', 'Hylkää', 'Kysy']} />
               )}
             </div>
             <div class="card-body">

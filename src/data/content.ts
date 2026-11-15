@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     type: 'Agentti',
     name: 'Työnhakuagentti',
     description:
-      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on ote aidosta viestistä.',
+      'Etsii työpaikkailmoitukset, pisteyttää niiden sopivuuden ja lähettää tulokset Telegramiin. Esikatselussa on sen arvio teidän ilmoituksestanne.',
     note: 'Rakensin omaan käyttöön.',
     tech: ['Claude', 'Tavily', 'Telegram'],
     preview: { kind: 'telegram' },
@@ -108,20 +108,21 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-/** Ote Työnhakuagentin aidosta Telegram-viestistä 20.10.2026. Kaksi viimeistä perustelua on jätetty pois. */
+/**
+ * Ote Työnhakuagentin aidosta Telegram-viestistä: agentin arvio tästä ilmoituksesta.
+ * Pois jätetyt kohdat on merkitty hakasulkeilla. Muuten teksti on agentin omaa.
+ */
 export const JOB_AGENT_MESSAGE: { text: string; kind?: 'title' | 'meta' | 'score' }[] = [
-  { text: '1. Agentic Software Developer, Witted', kind: 'title' },
-  { text: 'Helsinki | julkaistu 20.10. (18h sitten)', kind: 'meta' },
+  { text: '100/100 Oman median asiantuntija', kind: 'title' },
+  { text: 'Julkee x Lempee', kind: 'meta' },
   {
-    text: 'Täydellinen osuma: rooli hakee nimenomaan agenttisohjelmistokehittäjää, employment tai freelance. Witted on konsulttiverkosto, jossa hakijan itseopittu AI-rakentaminen ja käytännön agenttikokemus (Hermes, Ilona) painavat enemmän kuin tutkinto.',
+    text: 'Osuu: Paikka on hybrid-työ Helsingissä, joten joustavampi kuin puhdas lähityö. Seniority on junior ja vaadittavat taidot (Astro, Claude Code, GitHub, Vercel) ovat Sampon päivittäisiä työkaluja. Hakukoneoptimointi vastaa Sampon tuotannon SEO-osaamista. [...]',
   },
-  { text: 'Sopivuus: 9/10', kind: 'score' },
-  { text: '2. AI Operations Specialist, Truster / Clevry Finland', kind: 'title' },
-  { text: 'Helsinki | julkaistu 20.10.', kind: 'meta' },
-  { text: 'Sopivuus: 8/10', kind: 'score' },
-  { text: '3. AI Engineer, Zoner / Academic Work', kind: 'title' },
-  { text: 'Vantaa | julkaistu 20.10.', kind: 'meta' },
-  { text: 'Sopivuus: 8/10', kind: 'score' },
+  {
+    text: 'Puuttuu: Hakija asuu Oulussa, joten Helsinkiin muutto olisi tarpeen. CRM-järjestelmät ja markkinoinnin analytiikka ovat vasta opettelussa, mutta ne ovat vain nice-to-have.',
+  },
+  { text: 'Kannattaako hakea: Kyllä. Paikka on vahva osuma Sampon taidoille. [...]', kind: 'score' },
+  { text: 'Hyväksy → luonnos tulee seuraavan ajon mukana.', kind: 'meta' },
 ];
 
 export const SMALL_WORKS = [

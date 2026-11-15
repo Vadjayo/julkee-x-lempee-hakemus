@@ -3,8 +3,11 @@ interface Props {
   bot: string;
   lines: { text: string; kind?: 'title' | 'meta' | 'score' }[];
   caption: string;
+  /** Viestin kellonaika ja agentin toimintonapit, kuten ne Telegramissa näkyvät. */
+  time?: string;
+  actions?: string[];
 }
-const { bot, lines, caption } = Astro.props;
+const { bot, lines, caption, time, actions = [] } = Astro.props;
 ---
 <figure class="tg" data-play="once">
   <div class="tg-head" aria-hidden="true">
@@ -16,7 +19,13 @@ const { bot, lines, caption } = Astro.props;
     <div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="msg">
       {lines.map((line, i) => <p class:list={['tl', line.kind]} style={`--i:${i}`}>{line.text}</p>)}
+      {time && <p class="tl time" style={`--i:${lines.length}`}>{time}</p>}
     </div>
+    {actions.length > 0 && (
+      <p class="tl actions" style={`--i:${lines.length + 1}`} aria-hidden="true">
+        {actions.map((action) => <span>{action}</span>)}
+      </p>
+    )}
   </div>
   <figcaption>{caption}</figcaption>
 </figure>
@@ -32,8 +41,13 @@ const { bot, lines, caption } = Astro.props;
   .tl { color: #d6d2c8; }
   .tl.title { font-weight: 700; color: var(--fg); }
   .tl.title:not(:first-child) { margin-top: 8px; }
+  .tl:not(.title):not(.meta):not(:first-child), .tl.score { margin-top: 8px; }
+  .tl.score + .tl.meta { margin-top: 8px; }
   .tl.meta { font: 11px var(--mono); color: var(--dim); }
   .tl.score { color: var(--fg); font-weight: 600; }
+  .tl.time { margin-top: 2px; text-align: right; font: 10.5px var(--mono); color: var(--dim); }
+  .actions { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; max-width: 94%; margin-top: 6px; }
+  .actions span { padding: 7px 4px; text-align: center; border-radius: 8px; background: #1c1c1c; border: 1px solid #2c2c2c; font-size: 12.5px; font-weight: 600; color: var(--fg); }
   figcaption { padding: 0 12px 12px; font: 11px var(--mono); color: var(--dim); }
 
   .tg-body { position: relative; }
