@@ -1,0 +1,32 @@
+---
+import { CONFIG } from '../config';
+---
+<section class="section contact" id="yhteys" aria-labelledby="yhteys-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>11</b> / Yhteys</p>
+    <h2 id="yhteys-title" class="rv">Jutellaan lisää</h2>
+    <p class="lead rv">Tulen käymään Katajanokalla tai hoidetaan ensimmäinen keskustelu etänä.</p>
+    <address class="chips rv">
+      <a class="btn" href={CONFIG.phoneHref}>{CONFIG.phone}</a>
+      <a class="btn ghost" href={CONFIG.emailHref}>{CONFIG.email}</a>
+      <a class="btn ghost" href={CONFIG.linkedin} target="_blank" rel="noopener">LinkedIn<span class="visually-hidden"> (avautuu uuteen välilehteen)</span></a>
+    </address>
+  </div>
+</section>
+<footer class="footer">
+  <div class="wrap">
+    <p>Yhtään WordPress-sivua ei vahingoitettu tämän hakemuksen teossa.</p>
+    <p>
+      {CONFIG.name}, Oulu.
+      <a class="textlink" href={CONFIG.repo} target="_blank" rel="noopener">Lähdekoodi ja commit-historia GitHubissa</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .contact h2 { max-width: none; font-size: clamp(44px, 9vw, 120px); }
+  .chips { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; font-style: normal; }
+  .chips .btn { overflow-wrap: anywhere; }
+  .footer { padding: 40px 0 64px; color: var(--dim); font: 13px var(--mono); border-top: 1px solid var(--line); }
+  .footer .wrap { display: grid; gap: 10px; }
+</style>

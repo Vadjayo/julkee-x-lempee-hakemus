@@ -1,0 +1,53 @@
+---
+/**
+ * Selaimessa mitatut luvut täytetään skriptillä (scripts/main.ts).
+ * Lighthouse-pisteet luetaan tiedostosta, jonka `npm run lighthouse` kirjoittaa
+ * tuotanto-osoitteesta. Yhtään lukua ei ole kirjoitettu käsin.
+ */
+type Report = { url: string; date: string; device: string; scores: Record<string, number> };
+const files = import.meta.glob<{ default: Report }>('../data/lighthouse.json', { eager: true });
+const report = Object.values(files)[0]?.default;
+const labels: Record<string, string> = {
+  performance: 'Suorituskyky',
+  accessibility: 'Saavutettavuus',
+  'best-practices': 'Parhaat käytännöt',
+  seo: 'Hakukoneet',
+};
+const date = report ? new Date(report.date).toLocaleDateString('fi-FI') : '';
+---
+<section class="section" id="mitattu" aria-labelledby="mitattu-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>10</b> / Sivu mitattuna</p>
+    <h2 id="mitattu-title" class="rv">Tämä sivu numeroina</h2>
+    <p class="lead rv">Ylärivin luvut mitataan selaimessasi juuri nyt. Alarivi on Lighthousen tulos julkaistusta sivusta.</p>
+    <dl class="hood rv" id="metrics">
+      <div><dt>Ensimmäinen lataus</dt><dd><span id="m-size">?</span> <small>kt</small></dd></div>
+      <div><dt>Verkkopyynnöt</dt><dd id="m-req">?</dd></div>
+      <div><dt>DOM valmis</dt><dd><span id="m-dom">?</span> <small>ms</small></dd></div>
+      <div><dt>Evästeet</dt><dd id="m-cookie">?</dd></div>
+    </dl>
+    <noscript><p class="note">Selainmittaus tarvitsee JavaScriptin.</p></noscript>
+    {report ? (
+      <>
+        <dl class="hood rv" id="lighthouse">
+          {Object.entries(labels).filter(([key]) => key in report.scores).map(([key, label]) => (
+            <div><dt>{label}</dt><dd>{report.scores[key]} <small>/ 100</small></dd></div>
+          ))}
+        </dl>
+        <p class="note rv">Lighthouse, {report.device === 'mobile' ? 'mobiili' : report.device}, ajettu {date}.</p>
+      </>
+    ) : (
+      <p class="note rv">Lighthouse-pisteet lisätään, kun sivu on julkaistu ja mitattu.</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .hood { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; margin-top: 40px; }
+  .hood + .hood, :global(noscript) + .hood { margin-top: 16px; }
+  .hood div { background: var(--bg); padding: 24px; }
+  .hood dt { font: 12px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+  .hood dd { margin-top: 8px; font: 800 30px var(--sans); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .hood small { font: 400 13px var(--mono); color: var(--dim); letter-spacing: 0; }
+  .note { margin-top: 16px; font: 13px var(--mono); color: var(--dim); }
+</style>

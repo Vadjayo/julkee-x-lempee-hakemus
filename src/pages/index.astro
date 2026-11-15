@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro';
+import Intro from '../components/Intro.astro';
+import Hero from '../components/Hero.astro';
+import Experience from '../components/Experience.astro';
+import Work from '../components/Work.astro';
+import Skills from '../components/Skills.astro';
+import Process from '../components/Process.astro';
+import Match from '../components/Match.astro';
+import Versus from '../components/Versus.astro';
+import Builder from '../components/Builder.astro';
+import Metrics from '../components/Metrics.astro';
+import Contact from '../components/Contact.astro';
+import { PRACTICAL } from '../data/content';
+---
+<Base>
+  <Intro />
+  <main>
+    <Hero />
+    <Experience />
+    <Work />
+    <Skills />
+    <Process />
+    <Match />
+    <Versus />
+    <Builder />
+
+    <section class="section" id="miksi" aria-labelledby="miksi-title">
+      <div class="wrap">
+        <p class="kicker rv"><b>08</b> / Miksi Julkee x Lempee</p>
+        <h2 id="miksi-title" class="rv">Miksi juuri te</h2>
+        <p class="lead rv">
+          Useimmat työpaikkailmoitukset ovat PDF-tiedostoja. Te rakensitte työkalun, joka polttaa WordPress-sivuja.
+          <strong>Haluan töihin paikkaan, jossa asiat tehdään noin.</strong>
+        </p>
+        <p class="lead rv">
+          Teette sivut samoilla välineillä, joita käytän joka päivä. Sanotte ääneen, että prosessin saa kyseenalaistaa, jos
+          sen voi tehdä paremmin. Ja markkinointi on se osa-alue, jota en vielä osaa niin hyvin kuin haluaisin. Teiltä sen
+          oppii.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="kaytanto" aria-labelledby="kaytanto-title">
+      <div class="wrap">
+        <p class="kicker rv"><b>09</b> / Käytännön asiat</p>
+        <h2 id="kaytanto-title" class="rv">Kolme asiaa, jotka on hyvä tietää</h2>
+        <ol class="facts3">
+          {PRACTICAL.map((text) => <li class="rv">{text}</li>)}
+        </ol>
+      </div>
+    </section>
+
+    <Metrics />
+    <Contact />
+  </main>
+</Base>
+
+<script>
+  import '../scripts/main.ts';
+</script>
+
+<style>
+  .facts3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 48px; counter-reset: fact; }
+  .facts3 li { border-left: 2px solid var(--red); padding: 2px 0 2px 20px; font-size: 18px; counter-increment: fact; text-wrap: pretty; }
+  .facts3 li::before { content: '0' counter(fact); display: block; font: 12px var(--mono); color: var(--dim); margin-bottom: 8px; }
+</style>
