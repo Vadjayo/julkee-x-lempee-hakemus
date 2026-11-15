@@ -187,6 +187,7 @@ export const SKILLS: { area: string; items: { level: Level; text: string }[] }[]
     items: [
       { level: 'daily', text: 'Claude API, agentit ja MCP' },
       { level: 'daily', text: 'Promptien ja työkalukutsujen suunnittelu, automaattitestit' },
+      { level: 'learning', text: 'Sertifikaatit Claude Architect Foundations ja Claude Architect Professional. Suoritus on kesken.' },
     ],
   },
 ];
