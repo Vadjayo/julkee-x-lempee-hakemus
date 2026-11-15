@@ -31,7 +31,9 @@
     font-family: Georgia, 'Times New Roman', serif;
     transition: opacity 0.4s;
   }
-  .intro.gone, .intro-hud.gone { opacity: 0; pointer-events: none; }
+  .intro.gone { opacity: 0; pointer-events: none; }
+  /* Palkki katoaa kerralla. Häivytys jättäisi tekstin hetkeksi liian himmeäksi. */
+  :global(.js:not(.intro-done)) .intro-hud.gone { display: none; }
   .intro-bar { background: #1d2327; color: #f0f0f1; font: 13px var(--sans); padding: 8px 16px; display: flex; gap: 18px; flex-wrap: wrap; }
   .intro-notice { background: #fff; border-left: 4px solid #d63638; margin: 16px; padding: 12px 16px; font: 14px var(--sans); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); }
   .intro-old { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px 24px 80px; }
@@ -44,7 +46,6 @@
     padding: 12px 20px;
     background: #000; color: var(--fg);
     font: 14px var(--mono);
-    transition: opacity 0.4s;
   }
   #intro-pct { min-width: 13ch; }
   .intro-meter { flex: 1; height: 4px; background: #222; border-radius: 4px; overflow: hidden; }

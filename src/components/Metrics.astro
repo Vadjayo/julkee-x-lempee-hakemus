@@ -34,7 +34,10 @@ const date = report ? new Date(report.date).toLocaleDateString('fi-FI') : '';
             <div><dt>{label}</dt><dd>{report.scores[key]} <small>/ 100</small></dd></div>
           ))}
         </dl>
-        <p class="note rv">Lighthouse, {report.device === 'mobile' ? 'mobiili' : report.device}, ajettu {date}.</p>
+        <p class="note rv">
+          Lighthouse, {report.device === 'mobile' ? 'mobiili' : report.device}, ajettu {date}.
+          {report.scores.seo < 100 && 'Hakukonepisteistä puuttuu se osa, jonka noindex vie. Se on tällä sivulla tarkoituksella.'}
+        </p>
       </>
     ) : (
       <p class="note rv">Lighthouse-pisteet lisätään, kun sivu on julkaistu ja mitattu.</p>

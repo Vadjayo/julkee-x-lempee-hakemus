@@ -35,18 +35,22 @@ function intro(): void {
   };
   $('#intro-skip').addEventListener('click', finish);
 
-  // Pilko tekstit kirjaimiksi, jotta jokainen voi pudota erikseen.
+  // Pilko tekstit putoaviksi paloiksi: otsikko kirjaimittain, muu teksti sanoittain.
+  // Sanat pitävät elementtien määrän pienenä, jotta purku pyörii kevyesti hitaallakin puhelimella.
   const walker = document.createTreeWalker(overlay, NodeFilter.SHOW_TEXT);
   const nodes: Text[] = [];
   while (walker.nextNode()) nodes.push(walker.currentNode as Text);
   const chars: HTMLElement[] = [];
   for (const node of nodes) {
-    if (!node.textContent?.trim()) continue;
+    const text = node.textContent ?? '';
+    if (!text.trim()) continue;
+    const byLetter = node.parentElement?.classList.contains('intro-title');
+    const pieces = byLetter ? [...text] : text.split(/(?<=\s)/);
     const fragment = document.createDocumentFragment();
-    for (const char of node.textContent) {
+    for (const piece of pieces) {
       const span = document.createElement('span');
       span.className = 'ch';
-      span.textContent = char;
+      span.textContent = piece;
       fragment.append(span);
       chars.push(span);
     }
@@ -73,7 +77,8 @@ function intro(): void {
     const tick = (now: number) => {
       if (done) return;
       const p = Math.min(1, (now - start) / FALL);
-      pct.textContent = `Purettu ${Math.round(p * 100)} %`;
+      const label = `Purettu ${Math.round(p * 100)} %`;
+      if (pct.textContent !== label) pct.textContent = label;
       meter.style.transform = `scaleX(${p})`;
       if (p < 1) requestAnimationFrame(tick);
       else setTimeout(finish, 150);
